@@ -12,7 +12,7 @@ It is built following the **KISS** (Keep It Simple, Stupid) and **DRY** (Don't R
 * **100% Local Control:** Communicates directly with your printer via WebSockets. No cloud, no tracking.
 * **Efficient File Management:** Rapidly delete files and print history.
 * **Wildcard Filtering:** Quickly find specific files or file types using wildcard support (e.g., `*.gcode` or `*PLA*`).
-* **Multilingual UI:** Built-in language support for English, Danish, and German.
+* **Multilingual UI:** Built-in language support for English, Danish, German, French, Spanish, and Italian.
 * **Responsive Design:** Optimized for both desktop and mobile browsers.
 
 ## How to use
