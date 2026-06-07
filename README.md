@@ -16,7 +16,7 @@ It is built following the **KISS** (Keep It Simple, Stupid) and **DRY** (Don't R
 * **Responsive Design:** Optimized for both desktop and mobile browsers.
 
 ## How to use
-1. Download the `centauri-manager.html` file from this repository.
+1. Download the [centauri-manager.html](centauri-manager.html) file from this repository.
 2. Open it in any modern web browser (Chrome, Edge, or Firefox).
 3. Enter your printer's local IP address and click **Connect**.
 4. Manage your files effortlessly.
