@@ -28,6 +28,13 @@
             color: var(--text-main);
             -webkit-font-smoothing: antialiased;
         }
+        body.dark-mode {
+            --bg-color: #111827;
+            --surface: #1f2937;
+            --text-main: #f9fafb;
+            --text-muted: #9ca3af;
+            --border: #374151;
+        }
 
         .container {
             background: var(--surface);
@@ -132,17 +139,18 @@
 
         /* Filter & Controls Bar */
         .controls-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 16px;
-            gap: 15px;
-            background: #f8fafc;
-            padding: 12px 16px;
-            border-radius: 8px;
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-bottom: 16px; 
+            gap: 15px; 
+            padding: 12px; 
+            background: var(--bg-color); 
+            border-radius: 8px; 
             border: 1px solid var(--border);
+            color: var(--text-main);
         }
-        
+
         .search-box {
             position: relative;
             flex: 1;
@@ -273,10 +281,14 @@
                 </svg>
                 <span data-i18n="title">Centauri Carbon Manager</span>
             </h2>
+            <button class="lang-select" onclick="toggleDarkMode()">🌓</button>
             <select class="lang-select" id="langSelect" onchange="changeLang(this.value)">
                 <option value="en">🇬🇧 EN</option>
                 <option value="da">🇩🇰 DA</option>
                 <option value="de">🇩🇪 DE</option>
+                <option value="fr">🇫🇷 FR</option>
+                <option value="es">🇪🇸 ES</option>
+                <option value="it">🇮🇹 IT</option>
             </select>
         </div>
         
@@ -424,6 +436,93 @@
                 confirmDelete1: "Löschen Sie ",
                 confirmDelete2: " Element(e) aus ",
                 confirmDelete3: "? Dies kann nicht rückgängig gemacht werden."
+            },
+            fr: {
+                title: "Centauri Carbon Manager",
+                setupDesc: "Connectez-vous directement à votre imprimante pour gérer rapidement les fichiers et l'historique.",
+                ipPlaceholder: "IP de l'imprimante (ex: 192.168.0.17)",
+                connectBtn: "Connecter",
+                connectingBtn: "Connexion...",
+                tabLocal: "Fichiers Locaux",
+                tabHistory: "Historique",
+                selectAll: "Sélectionner tout",
+                filterPlaceholder: "Filtrer (ex: *PLA*, benchy*)",
+                deleteBtn: "Supprimer",
+                deletingBtn: "Suppression...",
+                disconnect: "Déconnecter",
+                loadingData: "Chargement...",
+                itemsTotal: "éléments au total",
+                showing: "Affichage",
+                of: "sur",
+                items: "éléments",
+                noItems: "Aucun élément trouvé.",
+                unknownItem: "Élément inconnu",
+                printDuration: "Durée d'impression",
+                errInvalidIp: "Veuillez entrer une adresse IP valide.",
+                errDelFailed: "Échec de la suppression. Ack: ",
+                errConnFailed: "Échec de la connexion. Vérifiez l'IP et le réseau.",
+                errWsClosed: "Connexion WebSocket fermée.",
+                confirmDelete1: "Supprimer ",
+                confirmDelete2: " élément(s) de ",
+                confirmDelete3: "? Impossible d'annuler."
+            },
+            es: {
+                title: "Centauri Carbon Manager",
+                setupDesc: "Conéctese directamente a su impresora para gestionar archivos e historial rápidamente.",
+                ipPlaceholder: "IP de la impresora (ej: 192.168.0.17)",
+                connectBtn: "Conectar",
+                connectingBtn: "Conectando...",
+                tabLocal: "Archivos Locales",
+                tabHistory: "Historial",
+                selectAll: "Seleccionar todo",
+                filterPlaceholder: "Filtrar (ej: *PLA*, benchy*)",
+                deleteBtn: "Eliminar",
+                deletingBtn: "Eliminando...",
+                disconnect: "Desconectar",
+                loadingData: "Cargando datos...",
+                itemsTotal: "elementos en total",
+                showing: "Mostrando",
+                of: "de",
+                items: "elementos",
+                noItems: "No se encontraron elementos.",
+                unknownItem: "Elemento desconocido",
+                printDuration: "Duración de impresión",
+                errInvalidIp: "Por favor, introduzca una dirección IP válida.",
+                errDelFailed: "Error al eliminar. Ack: ",
+                errConnFailed: "Error de conexión. Verifique la IP y la red.",
+                errWsClosed: "Conexión WebSocket cerrada.",
+                confirmDelete1: "Eliminar ",
+                confirmDelete2: " elemento(s) de ",
+                confirmDelete3: "? Esto no se puede deshacer."
+            },
+            it: {
+                title: "Centauri Carbon Manager",
+                setupDesc: "Connettiti direttamente alla stampante per gestire rapidamente file e cronologia.",
+                ipPlaceholder: "IP della stampante (es: 192.168.0.17)",
+                connectBtn: "Connetti",
+                connectingBtn: "Connessione...",
+                tabLocal: "File Locali",
+                tabHistory: "Cronologia",
+                selectAll: "Seleziona tutto",
+                filterPlaceholder: "Filtra (es: *PLA*, benchy*)",
+                deleteBtn: "Elimina",
+                deletingBtn: "Eliminazione...",
+                disconnect: "Disconnetti",
+                loadingData: "Caricamento...",
+                itemsTotal: "elementi totali",
+                showing: "Mostra",
+                of: "di",
+                items: "elementi",
+                noItems: "Nessun elemento trovato.",
+                unknownItem: "Elemento sconosciuto",
+                printDuration: "Durata stampa",
+                errInvalidIp: "Inserire un indirizzo IP valido.",
+                errDelFailed: "Errore durante l'eliminazione. Ack: ",
+                errConnFailed: "Connessione fallita. Verificare IP e rete.",
+                errWsClosed: "Connessione WebSocket chiusa.",
+                confirmDelete1: "Elimina ",
+                confirmDelete2: " elemento/i da ",
+                confirmDelete3: "? Questa operazione è irreversibile."
             }
         };
 
@@ -432,6 +531,12 @@
             return translations[currentLang][key] || key;
         }
 
+        // Toggle Theme
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
+        }
+               
         // --- Language Handling ---
         function changeLang(lang) {
             currentLang = lang;
@@ -751,6 +856,7 @@
 
         // Initialize translations on first load
         changeLang('en');
+        if (localStorage.getItem('darkMode') === 'true') document.body.classList.add('dark-mode')
     </script>
 </body>
 </html>
