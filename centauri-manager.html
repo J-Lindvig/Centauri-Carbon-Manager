@@ -315,7 +315,10 @@
                     <input type="checkbox" id="selectAll" onclick="toggleSelectAll()"> 
                     <span data-i18n="selectAll">Select All</span>
                 </label>
-                
+                <div style="display:flex; gap:5px;">
+                    <button onclick="sortList('name')" style="padding:4px 8px;">A-Z</button>
+                    <button onclick="sortList('size')" style="padding:4px 8px;">Size</button>
+                </div>
                 <div class="search-box">
                     <input type="text" id="searchInput" data-i18n="filterPlaceholder" placeholder="Filter (e.g. *PLA*, benchy*)" onkeyup="filterItems()">
                 </div>
@@ -695,6 +698,14 @@
             }
         }
 
+        function formatSize(bytes) {
+            if (!bytes || bytes === 0) return '0 B';
+            const k = 1024;
+            const sizes = ['B', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+        }
+
         function renderList(items, mode) {
             if (mode !== activeTab) return;
 
@@ -717,8 +728,12 @@
                 // Strip unnecessary folder prefixes
                 itemLabel = itemLabel.replace('/local/', '').replace('/history/', '');
                 
+                // Hent filstørrelse (kun for local)
+                const fileSize = (mode === 'local' && item.FileSize) ? formatSize(item.FileSize) : '';
+                
                 const li = document.createElement('li');
                 li.setAttribute('data-search-term', itemLabel.toLowerCase());
+                li.setAttribute('data-size', item.FileSize || 0);
                 
                 const cb = document.createElement('input');
                 cb.type = 'checkbox';
@@ -731,20 +746,27 @@
                 
                 const label = document.createElement('label');
                 label.htmlFor = `item_${index}`;
-                label.innerHTML = `<span>${itemLabel || t('unknownItem')}</span>`;
+                label.style.width = "100%";
+                label.style.paddingLeft = "10px";
+                label.style.cursor = "pointer";
                 
-                // Calculate print duration from elapsed machine time
+                // Layout: Navn og størrelse i toppen
+                label.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <span style="font-weight:500;">${itemLabel || t('unknownItem')}</span>
+                        <span style="font-size:0.85em; color:var(--text-muted); font-family:monospace;">${fileSize}</span>
+                    </div>
+                `;
+                
+                // Tilføj print duration hvis det er history
                 if (mode === 'history' && item.BeginTime && item.EndTime) {
                     const durationSecs = item.EndTime - item.BeginTime;
-                    
                     if (durationSecs > 0) {
                         const hours = Math.floor(durationSecs / 3600);
                         const minutes = Math.floor((durationSecs % 3600) / 60);
-                        let durationStr = '';
-                        if (hours > 0) durationStr += `${hours}h `;
-                        durationStr += `${minutes}m`;
+                        let durationStr = (hours > 0 ? `${hours}h ` : '') + `${minutes}m`;
                         
-                        label.innerHTML += `<span class="item-subtitle">${t('printDuration')}: ${durationStr}</span>`;
+                        label.innerHTML += `<div class="item-subtitle" style="font-size:0.8em; color:var(--text-muted); margin-top:4px;">${t('printDuration')}: ${durationStr}</div>`;
                     }
                 }
                 
@@ -753,7 +775,7 @@
                 list.appendChild(li);
             });
             
-            filterItems(); // Re-apply filter automatically after fetch
+            filterItems(); // Re-apply filter
         }
 
         function filterItems() {
@@ -854,9 +876,32 @@
             }
         }
 
+        function sortList(key) {
+            const list = document.getElementById('itemList');
+            let items = Array.from(list.children).map(li => {
+                // Vi gemmer rådata i et objekt for at kunne sortere det
+                return {
+                    element: li,
+                    name: li.getAttribute('data-search-term'),
+                    size: parseInt(li.getAttribute('data-size') || 0)
+                };
+            });
+
+            items.sort((a, b) => {
+                if (key === 'name') return a.name.localeCompare(b.name) * sortDirection;
+                if (key === 'size') return (a.size - b.size) * sortDirection;
+            });
+
+            sortDirection *= -1; // Skift retning næste gang
+            items.forEach(item => list.appendChild(item.element));
+        }
+
         // Initialize translations on first load
         changeLang('en');
+
         if (localStorage.getItem('darkMode') === 'true') document.body.classList.add('dark-mode')
+
+        let sortDirection = 1; // 1 for asc, -1 for desc
     </script>
 </body>
 </html>
