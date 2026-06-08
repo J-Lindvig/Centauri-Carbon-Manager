@@ -1,4 +1,4 @@
-# Centauri Carbon Manager v2.0
+# Centauri Carbon Manager v2.1
 
 A fast, lightweight, and local file management tool designed for Elegoo (and Centauri) 3D printers.
 
