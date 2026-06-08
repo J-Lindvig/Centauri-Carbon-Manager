@@ -7,8 +7,7 @@ As a 3D printing enthusiast, I encountered frustrations with the native printer 
 
 It is built following the **KISS** (Keep It Simple, Stupid) and **DRY** (Don't Repeat Yourself) principles. It requires no installation, no external CSS/JS libraries, and no complex backend; simply open the file in your browser and connect to your printer on your local LAN.
 
-<img width="777" height="963" alt="image" src="https://github.com/user-attachments/assets/c0b6424c-aac4-49ef-a707-0b20538c5b2f" />
-
+<img width="789" height="885" alt="image" src="https://github.com/user-attachments/assets/fc3d6b6b-a7fd-4dc5-b192-a04bd095eca8" />
 
 ## Key Features
 * **100% Local & Offline Control:** Communicates directly with your printer via WebSockets. No cloud, no tracking, and zero external dependencies (works perfectly on an isolated network).
