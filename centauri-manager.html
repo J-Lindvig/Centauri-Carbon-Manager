@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+7<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -308,14 +308,17 @@
             <ul id="itemList"></ul>
             
             <div class="status-bar">
-                <button class="btn-outline" onclick="App.disconnect()" data-i18n="disconnect">Disconnect</button>
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn-outline" onclick="App.disconnect()" data-i18n="disconnect">Disconnect</button>
+                    <button class="btn-outline" onclick="App.openWebUI()" data-i18n="openWebUI">Web UI ↗</button>
+                </div>
                 <span id="itemCount" data-i18n="loadingData">Loading data...</span>
             </div>
         </div>
     </div>
     
     <div class="footer">
-        Created by <strong>Broby IT</strong> | Centauri Carbon Manager v2.0
+        Created by <strong>Broby IT</strong> | Centauri Carbon Manager v<span id="appVersion"></span>
     </div>
 
     <!-- Custom Modal -->
@@ -334,6 +337,8 @@
     <div id="toast-container"></div>
 
     <script>
+        // --- Configuration ---
+        const APP_VERSION = "2.1";
         // --- Translations (DRY format) ---
         const i18n = {
             en: {
@@ -341,7 +346,7 @@
                 ipPlaceholder: "Printer IP (e.g. 192.168.0.17)", connectBtn: "Connect", connectingBtn: "Connecting...",
                 tabLocal: "Local Files", tabHistory: "Print History", selectAll: "Select All",
                 filterPlaceholder: "Filter (e.g. *PLA*, benchy*)", deleteBtn: "Delete", deletingBtn: "Deleting...",
-                disconnect: "Disconnect", loadingData: "Loading data...", itemsTotal: "items total", showing: "Showing",
+                disconnect: "Disconnect", openWebUI: "Web UI ↗", loadingData: "Loading data...", itemsTotal: "items total", showing: "Showing",
                 of: "of", items: "items", noItems: "No items found.", unknownItem: "Unknown item", printDuration: "Print Duration",
                 errInvalidIp: "Invalid IP address provided.", errDelFailed: "Deletion failed. Printer Ack: ", 
                 errConnFailed: "Connection failed. Verify printer IP and local network.", errWsClosed: "WebSocket connection closed.",
@@ -353,7 +358,7 @@
                 ipPlaceholder: "Printer IP (f.eks. 192.168.0.17)", connectBtn: "Forbind", connectingBtn: "Forbinder...",
                 tabLocal: "Lokale Filer", tabHistory: "Print Historik", selectAll: "Vælg alle",
                 filterPlaceholder: "Filtrér (f.eks. *PLA*, benchy*)", deleteBtn: "Slet", deletingBtn: "Sletter...",
-                disconnect: "Afbryd", loadingData: "Indlæser data...", itemsTotal: "elementer i alt", showing: "Viser",
+                disconnect: "Afbryd", openWebUI: "Web UI ↗", loadingData: "Indlæser data...", itemsTotal: "elementer i alt", showing: "Viser",
                 of: "af", items: "elementer", noItems: "Ingen elementer fundet.", unknownItem: "Ukendt element", printDuration: "Print varighed",
                 errInvalidIp: "Invalid IP address provided.", errDelFailed: "Deletion failed. Printer Ack: ", 
                 errConnFailed: "Connection failed. Verify printer IP and local network.", errWsClosed: "WebSocket connection closed.",
@@ -365,7 +370,7 @@
                 ipPlaceholder: "Drucker IP (z.B. 192.168.0.17)", connectBtn: "Verbinden", connectingBtn: "Verbinde...",
                 tabLocal: "Lokale Dateien", tabHistory: "Druckhistorie", selectAll: "Alle auswählen",
                 filterPlaceholder: "Filter (z.B. *PLA*, benchy*)", deleteBtn: "Löschen", deletingBtn: "Lösche...",
-                disconnect: "Trennen", loadingData: "Daten werden geladen...", itemsTotal: "Elemente insgesamt", showing: "Zeige",
+                disconnect: "Trennen", openWebUI: "Web UI ↗", loadingData: "Daten werden geladen...", itemsTotal: "Elemente insgesamt", showing: "Zeige",
                 of: "von", items: "Elementen", noItems: "Keine Elemente gefunden.", unknownItem: "Unbekanntes Element", printDuration: "Druckdauer",
                 errInvalidIp: "Invalid IP address provided.", errDelFailed: "Deletion failed. Printer Ack: ", 
                 errConnFailed: "Connection failed. Verify printer IP and local network.", errWsClosed: "WebSocket connection closed.",
@@ -377,7 +382,7 @@
                 ipPlaceholder: "IP de l'imprimante (ex: 192.168.0.17)", connectBtn: "Connecter", connectingBtn: "Connexion...",
                 tabLocal: "Fichiers Locaux", tabHistory: "Historique", selectAll: "Sélectionner tout",
                 filterPlaceholder: "Filtrer (ex: *PLA*, benchy*)", deleteBtn: "Supprimer", deletingBtn: "Suppression...",
-                disconnect: "Déconnecter", loadingData: "Chargement...", itemsTotal: "éléments au total", showing: "Affichage",
+                disconnect: "Déconnecter", openWebUI: "Web UI ↗", loadingData: "Chargement...", itemsTotal: "éléments au total", showing: "Affichage",
                 of: "sur", items: "éléments", noItems: "Aucun élément trouvé.", unknownItem: "Élément inconnu", printDuration: "Durée d'impression",
                 errInvalidIp: "Veuillez entrer une adresse IP valide.", errDelFailed: "Échec de la suppression. Ack: ", 
                 errConnFailed: "Échec de la connexion. Vérifiez l'IP et le réseau.", errWsClosed: "Connexion WebSocket fermée.",
@@ -389,7 +394,7 @@
                 ipPlaceholder: "IP de la impresora (ej: 192.168.0.17)", connectBtn: "Conectar", connectingBtn: "Conectando...",
                 tabLocal: "Archivos Locales", tabHistory: "Historial", selectAll: "Seleccionar todo",
                 filterPlaceholder: "Filtrar (ej: *PLA*, benchy*)", deleteBtn: "Eliminar", deletingBtn: "Eliminando...",
-                disconnect: "Desconectar", loadingData: "Cargando datos...", itemsTotal: "elementos en total", showing: "Mostrando",
+                disconnect: "Desconectar", openWebUI: "Web UI ↗", loadingData: "Cargando datos...", itemsTotal: "elementos en total", showing: "Mostrando",
                 of: "de", items: "elementos", noItems: "No se encontraron elementos.", unknownItem: "Elemento desconocido", printDuration: "Duración de impresión",
                 errInvalidIp: "Por favor, introduzca una dirección IP válida.", errDelFailed: "Error al eliminar. Ack: ", 
                 errConnFailed: "Error de conexión. Verifique la IP y la red.", errWsClosed: "Conexión WebSocket cerrada.",
@@ -401,7 +406,7 @@
                 ipPlaceholder: "IP della stampante (es: 192.168.0.17)", connectBtn: "Connetti", connectingBtn: "Connessione...",
                 tabLocal: "File Locali", tabHistory: "Cronologia", selectAll: "Seleziona tutto",
                 filterPlaceholder: "Filtra (es: *PLA*, benchy*)", deleteBtn: "Elimina", deletingBtn: "Eliminazione...",
-                disconnect: "Disconnetti", loadingData: "Caricamento...", itemsTotal: "elementi totali", showing: "Mostra",
+                disconnect: "Disconnetti", openWebUI: "Web UI ↗", loadingData: "Caricamento...", itemsTotal: "elementi totali", showing: "Mostra",
                 of: "di", items: "elementi", noItems: "Nessun elemento trovato.", unknownItem: "Elemento sconosciuto", printDuration: "Durata stampa",
                 errInvalidIp: "Inserire un indirizzo IP valido.", errDelFailed: "Errore durante l'eliminazione. Ack: ", 
                 errConnFailed: "Connessione fallita. Verificare IP e rete.", errWsClosed: "Connessione WebSocket chiusa.",
@@ -425,6 +430,9 @@
         // --- Core Application Logic ---
         const App = {
             init() {
+                // Update verionnumber
+                document.getElementById('appVersion').innerText = APP_VERSION;
+
                 if (localStorage.getItem('darkMode') === 'true') document.body.classList.add('dark-mode');
                 const savedLang = localStorage.getItem('lang') || 'en';
                 document.getElementById('langSelect').value = savedLang;
@@ -559,6 +567,11 @@
 
             disconnect() {
                 if (State.ws) State.ws.close();
+            },
+
+            openWebUI() {
+                const ip = document.getElementById('ipInput').value.trim();
+                if (ip) window.open(`http://${ip}`, '_blank');
             },
 
             handleMessage(res) {
