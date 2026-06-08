@@ -6,6 +6,7 @@
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M7 2h10v6h2v5h-2.5L13 17h-2l-3.5-4H5V8h2V2m3 20H2v-2h8a1 1 0 0 0 1-1v-1h2v1a3 3 0 0 1-3 3Z'/></svg>">
     <title data-i18n="title">Centauri Carbon Manager</title>
     <style>
+        /* --- CSS Variables & Theming --- */
         :root {
             --bg-color: #f3f4f6;
             --surface: #ffffff;
@@ -18,37 +19,47 @@
             --border: #e5e7eb;
             --radius: 12px;
             --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        body { 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
-            max-width: 700px; 
-            margin: 2rem auto; 
-            background: var(--bg-color);
-            color: var(--text-main);
-            -webkit-font-smoothing: antialiased;
-        }
         body.dark-mode {
             --bg-color: #111827;
             --surface: #1f2937;
             --text-main: #f9fafb;
             --text-muted: #9ca3af;
             --border: #374151;
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+        }
+
+        /* --- Base Setup --- */
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            max-width: 760px; 
+            margin: 2rem auto; 
+            padding: 0 1rem;
+            background: var(--bg-color);
+            color: var(--text-main);
+            -webkit-font-smoothing: antialiased;
+            transition: background-color 0.3s ease;
         }
 
         .container {
             background: var(--surface);
-            padding: 30px;
+            padding: 2rem;
             border-radius: var(--radius);
             box-shadow: var(--shadow);
-            border: 1px solid rgba(255,255,255,0.5);
+            border: 1px solid var(--border);
+            transition: var(--transition);
         }
         
+        /* --- Typography & Header --- */
         .header-top {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 1.5rem;
+            gap: 10px;
+            flex-wrap: wrap;
         }
 
         h2 { 
@@ -57,239 +68,202 @@
             letter-spacing: -0.5px; 
             display: flex;
             align-items: center;
-            gap: 10px;
-        }
-
-        /* Language Selector */
-        .lang-select {
-            padding: 6px 10px;
-            border-radius: 6px;
-            border: 1px solid var(--border);
-            background: var(--surface);
-            color: var(--text-main);
-            font-size: 14px;
-            cursor: pointer;
-            outline: none;
-        }
-        .lang-select:focus {
-            border-color: var(--primary);
-        }
-
-        /* Screens */
-        #setupScreen { display: flex; flex-direction: column; gap: 20px; }
-        #mainScreen { display: none; }
-
-        .input-group { display: flex; gap: 12px; }
-        
-        input[type="text"] {
+            gap: 12px;
             flex: 1;
-            padding: 12px 16px;
+            min-width: 250px;
+        }
+
+        h2 svg { fill: currentColor; }
+
+        /* --- Inputs & Selects --- */
+        .input-group { display: flex; gap: 12px; flex-wrap: wrap; }
+        
+        input[type="text"], select {
+            padding: 10px 14px;
             border: 1px solid var(--border);
             border-radius: 8px;
             font-size: 15px;
-            transition: all 0.2s;
-            background: #f9fafb;
+            background: var(--bg-color);
+            color: var(--text-main);
+            transition: var(--transition);
         }
-        input[type="text"]:focus {
+        input[type="text"] { flex: 1; min-width: 200px; }
+        
+        input[type="text"]:focus, select:focus {
             outline: none;
             border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
             background: var(--surface);
         }
+
+        .lang-select-group { display: flex; gap: 8px; }
         
-        /* Buttons */
+        /* --- Buttons --- */
         button { 
-            padding: 12px 24px; 
+            padding: 10px 20px; 
             font-size: 14px; 
             font-weight: 600;
-            border: none; 
+            border: 1px solid transparent; 
             border-radius: 8px; 
             cursor: pointer; 
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
-        button:active { transform: scale(0.98); }
+        button:active { transform: scale(0.97); }
+        button:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+        
         .btn-primary { background: var(--primary); color: white; }
         .btn-primary:hover:not(:disabled) { background: var(--primary-hover); }
-        .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
         
         .btn-danger { background: var(--danger); color: white; }
-        .btn-danger:hover:not(:disabled) { background: var(--danger-hover); box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3); }
-        .btn-danger:disabled { background: #fca5a5; cursor: not-allowed; }
+        .btn-danger:hover:not(:disabled) { background: var(--danger-hover); box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2); }
+        
+        .btn-outline { background: transparent; border-color: var(--border); color: var(--text-main); }
+        .btn-outline:hover:not(:disabled) { background: var(--bg-color); }
+        .btn-icon { padding: 10px; }
+        .btn-icon svg { fill: currentColor; }
 
-        /* Tabs */
+        /* --- Layout States --- */
+        #setupScreen { display: flex; flex-direction: column; gap: 24px; }
+        #mainScreen { display: none; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- Tabs --- */
         .tabs {
             display: flex;
             border-bottom: 2px solid var(--border);
-            margin-bottom: 24px;
-            gap: 10px;
+            margin-bottom: 20px;
+            gap: 8px;
         }
         .tab {
-            padding: 12px 20px;
+            padding: 12px 24px;
             background: transparent;
             color: var(--text-muted);
             border-bottom: 3px solid transparent;
             border-radius: 8px 8px 0 0;
         }
-        .tab:hover:not(.active) { color: var(--text-main); background: #f9fafb; }
-        .tab.active {
-            color: var(--primary);
-            border-bottom: 3px solid var(--primary);
-            margin-bottom: -2px;
-        }
+        .tab:hover:not(.active) { color: var(--text-main); background: var(--bg-color); }
+        .tab.active { color: var(--primary); border-bottom: 3px solid var(--primary); margin-bottom: -2px; }
 
-        /* Filter & Controls Bar */
+        /* --- Controls Bar --- */
         .controls-bar {
             display: flex; 
+            flex-wrap: wrap;
             justify-content: space-between; 
             align-items: center; 
             margin-bottom: 16px; 
-            gap: 15px; 
+            gap: 12px; 
             padding: 12px; 
             background: var(--bg-color); 
-            border-radius: 8px; 
+            border-radius: var(--radius); 
             border: 1px solid var(--border);
-            color: var(--text-main);
         }
 
-        .search-box {
-            position: relative;
-            flex: 1;
-        }
-        .search-box input {
-            width: 100%;
-            padding: 10px 10px 10px 36px;
-            margin: 0;
-            box-sizing: border-box;
-            font-family: monospace;
-        }
+        .search-box { position: relative; flex: 1; min-width: 150px; }
+        .search-box input { width: 100%; padding-left: 36px; box-sizing: border-box; }
         .search-box::before {
-            content: "🔍";
-            position: absolute;
-            left: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 14px;
-            opacity: 0.5;
+            content: "🔍"; position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+            font-size: 14px; opacity: 0.5; pointer-events: none;
         }
 
         .select-all-wrapper {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            gap: 8px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            white-space: nowrap;
-            width: auto;
+            display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; cursor: pointer;
         }
 
-        /* Checkboxes Global */
-        input[type="checkbox"] { 
-            width: 18px;
-            height: 18px;
-            cursor: pointer;
-            accent-color: var(--primary);
-            margin: 0;
-        }
+        input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; accent-color: var(--primary); margin: 0; }
 
-        /* List Area */
+        /* --- List Area --- */
         ul { 
-            list-style: none; 
-            padding: 0; 
-            margin: 0;
-            height: 50vh;
-            overflow-y: auto;
-            border: 1px solid var(--border);
-            border-radius: 8px;
+            list-style: none; padding: 0; margin: 0;
+            height: 50vh; overflow-y: auto;
+            border: 1px solid var(--border); border-radius: var(--radius);
             background: var(--surface);
         }
         
         ul::-webkit-scrollbar { width: 8px; }
-        ul::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 0 8px 8px 0; }
-        ul::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 4px; }
-        ul::-webkit-scrollbar-thumb:hover { background: #a8a8a8; }
+        ul::-webkit-scrollbar-track { background: transparent; }
+        ul::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+        ul::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
 
         li { 
-            padding: 14px 16px; 
-            border-bottom: 1px solid var(--border); 
-            display: flex; 
-            align-items: center; 
-            transition: background 0.1s;
+            padding: 14px 16px; border-bottom: 1px solid var(--border); 
+            display: flex; align-items: center; gap: 16px; transition: background 0.1s;
         }
-        li:hover { background-color: #f0fdf4; }
+        li:hover { background-color: rgba(59, 130, 246, 0.05); }
         li:last-child { border-bottom: none; }
         
-        /* Specific List Items */
-        #itemList input[type="checkbox"] {
-            margin-right: 16px; 
-        }
+        .item-content { flex: 1; display: flex; flex-direction: column; cursor: pointer; word-break: break-all; }
+        .item-header { display: flex; justify-content: space-between; align-items: center; width: 100%; font-weight: 500; }
+        .item-meta { font-size: 0.85em; color: var(--text-muted); font-family: monospace; }
+        .item-subtitle { font-size: 0.8em; color: var(--text-muted); margin-top: 4px; }
         
-        #itemList label {
-            cursor: pointer;
-            width: 100%;
-            word-break: break-all;
-            display: flex;
-            flex-direction: column;
-            font-size: 15px;
-            font-weight: 500;
-        }
-
-        .item-subtitle {
-            font-size: 12px;
-            color: var(--text-muted);
-            margin-top: 4px;
-            font-weight: 400;
-        }
-        
-        /* Status Bar */
-        #errorMsg { color: var(--danger); font-size: 14px; font-weight: 500; margin-top: 8px; }
-        
+        /* --- Status & Footer --- */
         .status-bar {
-            margin-top: 20px;
-            font-size: 13px;
-            color: var(--text-muted);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-top: 15px;
-            border-top: 1px solid var(--border);
+            margin-top: 20px; font-size: 13px; color: var(--text-muted);
+            display: flex; justify-content: space-between; align-items: center;
+            padding-top: 16px; border-top: 1px solid var(--border);
         }
-        .disconnect-btn {
-            background: none; color: var(--text-muted); padding: 6px 12px; 
-            border: 1px solid var(--border); border-radius: 6px;
-        }
-        .disconnect-btn:hover { background: #f3f4f6; color: var(--danger); border-color: #fca5a5; }
 
-        /* Footer */
         .footer { 
-            margin-top: auto; 
-            padding-top: 25px; 
-            font-size: 12px; 
-            color: var(--text-muted); 
+            margin-top: 2rem; font-size: 12px; color: var(--text-muted); 
             text-align: center; 
-            border-top: 1px solid var(--border);
         }
+
+        /* --- Custom Modal UI --- */
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(2px);
+            display: none; align-items: center; justify-content: center; z-index: 2000;
+            opacity: 0; transition: opacity 0.2s;
+        }
+        .modal-overlay.show { display: flex; opacity: 1; }
+        .modal {
+            background: var(--surface); padding: 24px; border-radius: var(--radius); 
+            width: 90%; max-width: 400px; box-shadow: var(--shadow); border: 1px solid var(--border);
+            transform: scale(0.95); transition: transform 0.2s;
+        }
+        .modal-overlay.show .modal { transform: scale(1); }
+        .modal h3 { margin-top: 0; color: var(--text-main); }
+        .modal-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px; }
+
+        /* --- Toast Notifications --- */
+        #toast-container {
+            position: fixed; bottom: 20px; right: 20px; z-index: 3000;
+            display: flex; flex-direction: column; gap: 10px;
+        }
+        .toast {
+            padding: 12px 20px; border-radius: 8px; color: white; font-size: 14px; font-weight: 500;
+            background: var(--text-main); box-shadow: var(--shadow);
+            opacity: 0; transform: translateY(20px); transition: var(--transition);
+            display: flex; align-items: center; gap: 8px;
+        }
+        .toast.show { opacity: 1; transform: translateY(0); }
+        .toast.error { background: var(--danger); }
+        .toast.success { background: #10b981; }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header-top">
-            <h2 id="title">
+            <h2>
                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
-                    <path fill="#000000" d="M12.686 7.479q.81 1.244 1.476 2.505c.64-1.217 1.849-2.086 3.328-2.086c2.217 0 3.826 1.954 3.826 4.102s-1.609 4.102-3.826 4.102c-.656 0-1.26-.171-1.784-.467l-.001-.001a4 4 0 0 1-1.509-1.553c-.484-.804-.725-1.706-.991-2.657c-.598-2.134-1.252-3.773-3.194-4.988a6.56 6.56 0 0 0-3.501-.985C2.815 5.451 0 8.323 0 12c0 3.727 2.761 6.549 6.51 6.549c1.955 0 3.639-.766 4.805-2.027a31 31 0 0 1-1.477-2.505c-.641 1.217-1.849 2.085-3.328 2.085c-2.218 0-3.827-1.953-3.827-4.102S4.292 7.898 6.51 7.898c.655 0 1.26.171 1.783.469h.001c.635.36 1.154.904 1.509 1.553c.574.951.807 2.041 1.144 3.188c.555 1.89 1.285 3.339 3.002 4.432a6.55 6.55 0 0 0 3.541 1.009c3.694 0 6.51-2.872 6.51-6.549c0-3.727-2.76-6.549-6.51-6.549c-1.954 0-3.64.766-4.804 2.028"/>
+                    <path d="M12.686 7.479q.81 1.244 1.476 2.505c.64-1.217 1.849-2.086 3.328-2.086c2.217 0 3.826 1.954 3.826 4.102s-1.609 4.102-3.826 4.102c-.656 0-1.26-.171-1.784-.467l-.001-.001a4 4 0 0 1-1.509-1.553c-.484-.804-.725-1.706-.991-2.657c-.598-2.134-1.252-3.773-3.194-4.988a6.56 6.56 0 0 0-3.501-.985C2.815 5.451 0 8.323 0 12c0 3.727 2.761 6.549 6.51 6.549c1.955 0 3.639-.766 4.805-2.027a31 31 0 0 1-1.477-2.505c-.641 1.217-1.849 2.085-3.328 2.085c-2.218 0-3.827-1.953-3.827-4.102S4.292 7.898 6.51 7.898c.655 0 1.26.171 1.783.469h.001c.635.36 1.154.904 1.509 1.553c.574.951.807 2.041 1.144 3.188c.555 1.89 1.285 3.339 3.002 4.432a6.55 6.55 0 0 0 3.541 1.009c3.694 0 6.51-2.872 6.51-6.549c0-3.727-2.76-6.549-6.51-6.549c-1.954 0-3.64.766-4.804 2.028"/>
                 </svg>
                 <span data-i18n="title">Centauri Carbon Manager</span>
             </h2>
-            <button class="lang-select" onclick="toggleDarkMode()">🌓</button>
-            <select class="lang-select" id="langSelect" onchange="changeLang(this.value)">
-                <option value="en">🇬🇧 EN</option>
-                <option value="da">🇩🇰 DA</option>
-                <option value="de">🇩🇪 DE</option>
-                <option value="fr">🇫🇷 FR</option>
-                <option value="es">🇪🇸 ES</option>
-                <option value="it">🇮🇹 IT</option>
-            </select>
+            <div class="lang-select-group">
+                <button class="btn-outline btn-icon" onclick="App.toggleDarkMode()" aria-label="Toggle Dark Mode">🌓</button>
+                <select id="langSelect" onchange="App.changeLang(this.value)">
+                    <option value="en">🇬🇧 EN</option>
+                    <option value="da">🇩🇰 DA</option>
+                    <option value="de">🇩🇪 DE</option>
+                    <option value="fr">🇫🇷 FR</option>
+                    <option value="es">🇪🇸 ES</option>
+                    <option value="it">🇮🇹 IT</option>
+                </select>
+            </div>
         </div>
         
         <!-- Setup Screen -->
@@ -297,611 +271,504 @@
             <p style="margin: 0; font-size: 15px; color: var(--text-muted);" data-i18n="setupDesc">Connect directly to your printer to manage files and history rapidly.</p>
             <div class="input-group">
                 <input type="text" id="ipInput" data-i18n="ipPlaceholder" placeholder="Printer IP (e.g. 192.168.0.17)" value="192.168.0.17">
-                <button class="btn-primary" id="connectBtn" onclick="connect()" data-i18n="connectBtn">Connect</button>
+                <button class="btn-primary" id="connectBtn" onclick="App.connect()">
+                    <span data-i18n="connectBtn">Connect</span>
+                </button>
             </div>
-            <div id="errorMsg"></div>
         </div>
 
         <!-- Main Content -->
         <div id="mainScreen">
             <div class="tabs">
-                <button class="tab active" id="tab-local" onclick="switchTab('local')" data-i18n="tabLocal">Local Files</button>
-                <button class="tab" id="tab-history" onclick="switchTab('history')" data-i18n="tabHistory">Print History</button>
+                <button class="tab active" id="tab-local" onclick="App.switchTab('local')" data-i18n="tabLocal">Local Files</button>
+                <button class="tab" id="tab-history" onclick="App.switchTab('history')" data-i18n="tabHistory">Print History</button>
             </div>
 
             <!-- Controls Bar -->
             <div class="controls-bar">
                 <label class="select-all-wrapper">
-                    <input type="checkbox" id="selectAll" onclick="toggleSelectAll()"> 
+                    <input type="checkbox" id="selectAll" onclick="App.toggleSelectAll()"> 
                     <span data-i18n="selectAll">Select All</span>
                 </label>
                 <div style="display:flex; gap:5px;">
-                    <button onclick="sortList('name')" style="padding:4px 8px;">A-Z</button>
-                    <button onclick="sortList('size')" style="padding:4px 8px;">Size</button>
+                    <button class="btn-outline" onclick="App.sortList('name')" style="padding: 6px 12px; font-size:12px;">A-Z ↕</button>
+                    <button class="btn-outline" onclick="App.sortList('size')" style="padding: 6px 12px; font-size:12px;">Size ↕</button>
                 </div>
                 <div class="search-box">
-                    <input type="text" id="searchInput" data-i18n="filterPlaceholder" placeholder="Filter (e.g. *PLA*, benchy*)" onkeyup="filterItems()">
+                    <input type="text" id="searchInput" data-i18n="filterPlaceholder" placeholder="Filter (e.g. *PLA*)" oninput="App.filterItems()">
                 </div>
-                <button class="btn-refresh" onclick="fetchData()">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 1024 1027">
-                        <path fill="#000000" d="M990 1L856 135q-69-63-157.5-98.5T512 1Q353 1 223.5 90.5T37 323l119 48q43-108 139.5-175T512 129q145 0 254 97L640 353q-1 14 8.5 23.5T672 385h309q14 0 27.5-13.5T1023 344l1-320q1-24-34-23zM512 897q-145 0-254-96l126-127q1-14-8.5-23.5T352 641H43q-14 1-27.5 14.5T1 683l-1 320q-1 24 34 23l134-134q69 63 157.5 98t186.5 35q159 0 288.5-89T987 703l-119-47q-43 108-139.5 174.5T512 897z"/>
-                    </svg>
+                <button class="btn-outline btn-icon" onclick="App.fetchData()" title="Refresh">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 1024 1027"><path d="M990 1L856 135q-69-63-157.5-98.5T512 1Q353 1 223.5 90.5T37 323l119 48q43-108 139.5-175T512 129q145 0 254 97L640 353q-1 14 8.5 23.5T672 385h309q14 0 27.5-13.5T1023 344l1-320q1-24-34-23zM512 897q-145 0-254-96l126-127q1-14-8.5-23.5T352 641H43q-14 1-27.5 14.5T1 683l-1 320q-1 24 34 23l134-134q69 63 157.5 98t186.5 35q159 0 288.5-89T987 703l-119-47q-43 108-139.5 174.5T512 897z"/></svg>
                 </button>
-                <button class="btn-danger" id="deleteBtn" onclick="deleteSelected()" disabled><span data-i18n="deleteBtn">Delete</span> (0)</button>
+                <button class="btn-danger" id="deleteBtn" onclick="App.deleteSelected()" disabled>
+                    <span data-i18n="deleteBtn">Delete</span> <span id="deleteCount">(0)</span>
+                </button>
             </div>
             
             <ul id="itemList"></ul>
             
             <div class="status-bar">
-                <button class="disconnect-btn" onclick="disconnect()" data-i18n="disconnect">Disconnect</button>
+                <button class="btn-outline" onclick="App.disconnect()" data-i18n="disconnect">Disconnect</button>
                 <span id="itemCount" data-i18n="loadingData">Loading data...</span>
             </div>
-            <div class="container">
-                <div class="footer">
-                    Created by <strong>Broby IT</strong> | Centauri Carbon Manager v1.1
-                </div>
+        </div>
+    </div>
+    
+    <div class="footer">
+        Created by <strong>Broby IT</strong> | Centauri Carbon Manager v1.1
+    </div>
+
+    <!-- Custom Modal -->
+    <div id="confirmModal" class="modal-overlay">
+        <div class="modal">
+            <h3 id="modalTitle">Confirm</h3>
+            <p id="modalText"></p>
+            <div class="modal-actions">
+                <button id="modalCancel" class="btn-outline" data-i18n="confirmCancel">Cancel</button>
+                <button id="modalConfirm" class="btn-danger" data-i18n="deleteBtn">Delete</button>
             </div>
         </div>
     </div>
 
-    <script>
-        // --- State Management ---
-        let ws;
-        let activeTab = 'local';
-        let currentItemCount = 0;
-        let currentLang = 'en';
+    <!-- Toast Container -->
+    <div id="toast-container"></div>
 
-        // --- Internationalization (i18n) Dictionary ---
-        const translations = {
+    <script>
+        // --- Translations (DRY format) ---
+        const i18n = {
             en: {
-                title: "Centauri Carbon Manager",
-                setupDesc: "Connect directly to your printer to manage files and history rapidly.",
-                ipPlaceholder: "Printer IP (e.g. 192.168.0.17)",
-                connectBtn: "Connect",
-                connectingBtn: "Connecting...",
-                tabLocal: "Local Files",
-                tabHistory: "Print History",
-                selectAll: "Select All",
-                filterPlaceholder: "Filter (e.g. *PLA*, benchy*)",
-                deleteBtn: "Delete",
-                deletingBtn: "Deleting...",
-                disconnect: "Disconnect",
-                loadingData: "Loading data...",
-                itemsTotal: "items total",
-                showing: "Showing",
-                of: "of",
-                items: "items",
-                noItems: "No items found.",
-                unknownItem: "Unknown item",
-                printDuration: "Print Duration",
-                errInvalidIp: "Please enter a valid IP address.",
-                errDelFailed: "Deletion failed. Ack: ",
-                errConnFailed: "Connection failed. Verify printer IP and network.",
-                errWsClosed: "WebSocket connection disconnected.",
-                confirmDelete1: "Delete ",
-                confirmDelete2: " item(s) from ",
-                confirmDelete3: "? This cannot be undone."
+                title: "Centauri Carbon Manager", setupDesc: "Connect directly to your printer to manage files and history rapidly.",
+                ipPlaceholder: "Printer IP (e.g. 192.168.0.17)", connectBtn: "Connect", connectingBtn: "Connecting...",
+                tabLocal: "Local Files", tabHistory: "Print History", selectAll: "Select All",
+                filterPlaceholder: "Filter (e.g. *PLA*, benchy*)", deleteBtn: "Delete", deletingBtn: "Deleting...",
+                disconnect: "Disconnect", loadingData: "Loading data...", itemsTotal: "items total", showing: "Showing",
+                of: "of", items: "items", noItems: "No items found.", unknownItem: "Unknown item", printDuration: "Print Duration",
+                errInvalidIp: "Invalid IP address provided.", errDelFailed: "Deletion failed. Printer Ack: ", 
+                errConnFailed: "Connection failed. Verify printer IP and local network.", errWsClosed: "WebSocket connection closed.",
+                confirmDelete1: "Delete ", confirmDelete2: " item(s) from ", confirmDelete3: "? This cannot be undone.",
+                confirmCancel: "Cancel", successDeleted: "Items deleted successfully."
             },
             da: {
-                title: "Centauri Carbon Manager",
-                setupDesc: "Opret forbindelse direkte til din printer for lynhurtigt at slette filer og historik.",
-                ipPlaceholder: "Printer IP (f.eks. 192.168.0.17)",
-                connectBtn: "Forbind",
-                connectingBtn: "Forbinder...",
-                tabLocal: "Lokale Filer",
-                tabHistory: "Print Historik",
-                selectAll: "Vælg alle",
-                filterPlaceholder: "Filtrér (f.eks. *PLA*, benchy*)",
-                deleteBtn: "Slet",
-                deletingBtn: "Sletter...",
-                disconnect: "Afbryd",
-                loadingData: "Indlæser data...",
-                itemsTotal: "elementer i alt",
-                showing: "Viser",
-                of: "af",
-                items: "elementer",
-                noItems: "Ingen elementer fundet.",
-                unknownItem: "Ukendt element",
-                printDuration: "Print varighed",
-                errInvalidIp: "Indtast venligst en gyldig IP-adresse.",
-                errDelFailed: "Sletning fejlede. Ack-kode: ",
-                errConnFailed: "Forbindelse fejlede. Tjek printerens IP og netværk.",
-                errWsClosed: "WebSocket-forbindelsen blev afbrudt.",
-                confirmDelete1: "Slet ",
-                confirmDelete2: " element(er) fra ",
-                confirmDelete3: "? Dette kan ikke fortrydes."
+                title: "Centauri Carbon Manager", setupDesc: "Opret forbindelse direkte til din printer for lynhurtigt at slette filer og historik.",
+                ipPlaceholder: "Printer IP (f.eks. 192.168.0.17)", connectBtn: "Forbind", connectingBtn: "Forbinder...",
+                tabLocal: "Lokale Filer", tabHistory: "Print Historik", selectAll: "Vælg alle",
+                filterPlaceholder: "Filtrér (f.eks. *PLA*, benchy*)", deleteBtn: "Slet", deletingBtn: "Sletter...",
+                disconnect: "Afbryd", loadingData: "Indlæser data...", itemsTotal: "elementer i alt", showing: "Viser",
+                of: "af", items: "elementer", noItems: "Ingen elementer fundet.", unknownItem: "Ukendt element", printDuration: "Print varighed",
+                errInvalidIp: "Invalid IP address provided.", errDelFailed: "Deletion failed. Printer Ack: ", 
+                errConnFailed: "Connection failed. Verify printer IP and local network.", errWsClosed: "WebSocket connection closed.",
+                confirmDelete1: "Slet ", confirmDelete2: " element(er) fra ", confirmDelete3: "? Dette kan ikke fortrydes.",
+                confirmCancel: "Annuller", successDeleted: "Elementer slettet succesfuldt."
             },
             de: {
-                title: "Centauri Carbon Manager",
-                setupDesc: "Verbinden Sie sich direkt mit Ihrem Drucker, um Dateien und Historie schnell zu verwalten.",
-                ipPlaceholder: "Drucker IP (z.B. 192.168.0.17)",
-                connectBtn: "Verbinden",
-                connectingBtn: "Verbinde...",
-                tabLocal: "Lokale Dateien",
-                tabHistory: "Druckhistorie",
-                selectAll: "Alle auswählen",
-                filterPlaceholder: "Filter (z.B. *PLA*, benchy*)",
-                deleteBtn: "Löschen",
-                deletingBtn: "Lösche...",
-                disconnect: "Trennen",
-                loadingData: "Daten werden geladen...",
-                itemsTotal: "Elemente insgesamt",
-                showing: "Zeige",
-                of: "von",
-                items: "Elementen",
-                noItems: "Keine Elemente gefunden.",
-                unknownItem: "Unbekanntes Element",
-                printDuration: "Druckdauer",
-                errInvalidIp: "Bitte geben Sie eine gültige IP-Adresse ein.",
-                errDelFailed: "Löschvorgang fehlgeschlagen. Ack: ",
-                errConnFailed: "Verbindung fehlgeschlagen. Überprüfen Sie die Drucker-IP und das Netzwerk.",
-                errWsClosed: "WebSocket-Verbindung getrennt.",
-                confirmDelete1: "Löschen Sie ",
-                confirmDelete2: " Element(e) aus ",
-                confirmDelete3: "? Dies kann nicht rückgängig gemacht werden."
+                title: "Centauri Carbon Manager", setupDesc: "Verbinden Sie sich direkt mit Ihrem Drucker, um Dateien und Historie schnell zu verwalten.",
+                ipPlaceholder: "Drucker IP (z.B. 192.168.0.17)", connectBtn: "Verbinden", connectingBtn: "Verbinde...",
+                tabLocal: "Lokale Dateien", tabHistory: "Druckhistorie", selectAll: "Alle auswählen",
+                filterPlaceholder: "Filter (z.B. *PLA*, benchy*)", deleteBtn: "Löschen", deletingBtn: "Lösche...",
+                disconnect: "Trennen", loadingData: "Daten werden geladen...", itemsTotal: "Elemente insgesamt", showing: "Zeige",
+                of: "von", items: "Elementen", noItems: "Keine Elemente gefunden.", unknownItem: "Unbekanntes Element", printDuration: "Druckdauer",
+                errInvalidIp: "Invalid IP address provided.", errDelFailed: "Deletion failed. Printer Ack: ", 
+                errConnFailed: "Connection failed. Verify printer IP and local network.", errWsClosed: "WebSocket connection closed.",
+                confirmDelete1: "Löschen Sie ", confirmDelete2: " Element(e) aus ", confirmDelete3: "? Dies kann nicht rückgängig gemacht werden.",
+                confirmCancel: "Abbrechen", successDeleted: "Elemente erfolgreich gelöscht."
             },
             fr: {
-                title: "Centauri Carbon Manager",
-                setupDesc: "Connectez-vous directement à votre imprimante pour gérer rapidement les fichiers et l'historique.",
-                ipPlaceholder: "IP de l'imprimante (ex: 192.168.0.17)",
-                connectBtn: "Connecter",
-                connectingBtn: "Connexion...",
-                tabLocal: "Fichiers Locaux",
-                tabHistory: "Historique",
-                selectAll: "Sélectionner tout",
-                filterPlaceholder: "Filtrer (ex: *PLA*, benchy*)",
-                deleteBtn: "Supprimer",
-                deletingBtn: "Suppression...",
-                disconnect: "Déconnecter",
-                loadingData: "Chargement...",
-                itemsTotal: "éléments au total",
-                showing: "Affichage",
-                of: "sur",
-                items: "éléments",
-                noItems: "Aucun élément trouvé.",
-                unknownItem: "Élément inconnu",
-                printDuration: "Durée d'impression",
-                errInvalidIp: "Veuillez entrer une adresse IP valide.",
-                errDelFailed: "Échec de la suppression. Ack: ",
-                errConnFailed: "Échec de la connexion. Vérifiez l'IP et le réseau.",
-                errWsClosed: "Connexion WebSocket fermée.",
-                confirmDelete1: "Supprimer ",
-                confirmDelete2: " élément(s) de ",
-                confirmDelete3: "? Impossible d'annuler."
+                title: "Centauri Carbon Manager", setupDesc: "Connectez-vous directement à votre imprimante pour gérer rapidement les fichiers et l'historique.",
+                ipPlaceholder: "IP de l'imprimante (ex: 192.168.0.17)", connectBtn: "Connecter", connectingBtn: "Connexion...",
+                tabLocal: "Fichiers Locaux", tabHistory: "Historique", selectAll: "Sélectionner tout",
+                filterPlaceholder: "Filtrer (ex: *PLA*, benchy*)", deleteBtn: "Supprimer", deletingBtn: "Suppression...",
+                disconnect: "Déconnecter", loadingData: "Chargement...", itemsTotal: "éléments au total", showing: "Affichage",
+                of: "sur", items: "éléments", noItems: "Aucun élément trouvé.", unknownItem: "Élément inconnu", printDuration: "Durée d'impression",
+                errInvalidIp: "Veuillez entrer une adresse IP valide.", errDelFailed: "Échec de la suppression. Ack: ", 
+                errConnFailed: "Échec de la connexion. Vérifiez l'IP et le réseau.", errWsClosed: "Connexion WebSocket fermée.",
+                confirmDelete1: "Supprimer ", confirmDelete2: " élément(s) de ", confirmDelete3: "? Impossible d'annuler.",
+                confirmCancel: "Annuler", successDeleted: "Éléments supprimés avec succès."
             },
             es: {
-                title: "Centauri Carbon Manager",
-                setupDesc: "Conéctese directamente a su impresora para gestionar archivos e historial rápidamente.",
-                ipPlaceholder: "IP de la impresora (ej: 192.168.0.17)",
-                connectBtn: "Conectar",
-                connectingBtn: "Conectando...",
-                tabLocal: "Archivos Locales",
-                tabHistory: "Historial",
-                selectAll: "Seleccionar todo",
-                filterPlaceholder: "Filtrar (ej: *PLA*, benchy*)",
-                deleteBtn: "Eliminar",
-                deletingBtn: "Eliminando...",
-                disconnect: "Desconectar",
-                loadingData: "Cargando datos...",
-                itemsTotal: "elementos en total",
-                showing: "Mostrando",
-                of: "de",
-                items: "elementos",
-                noItems: "No se encontraron elementos.",
-                unknownItem: "Elemento desconocido",
-                printDuration: "Duración de impresión",
-                errInvalidIp: "Por favor, introduzca una dirección IP válida.",
-                errDelFailed: "Error al eliminar. Ack: ",
-                errConnFailed: "Error de conexión. Verifique la IP y la red.",
-                errWsClosed: "Conexión WebSocket cerrada.",
-                confirmDelete1: "Eliminar ",
-                confirmDelete2: " elemento(s) de ",
-                confirmDelete3: "? Esto no se puede deshacer."
+                title: "Centauri Carbon Manager", setupDesc: "Conéctese directamente a su impresora para gestionar archivos e historial rápidamente.",
+                ipPlaceholder: "IP de la impresora (ej: 192.168.0.17)", connectBtn: "Conectar", connectingBtn: "Conectando...",
+                tabLocal: "Archivos Locales", tabHistory: "Historial", selectAll: "Seleccionar todo",
+                filterPlaceholder: "Filtrar (ej: *PLA*, benchy*)", deleteBtn: "Eliminar", deletingBtn: "Eliminando...",
+                disconnect: "Desconectar", loadingData: "Cargando datos...", itemsTotal: "elementos en total", showing: "Mostrando",
+                of: "de", items: "elementos", noItems: "No se encontraron elementos.", unknownItem: "Elemento desconocido", printDuration: "Duración de impresión",
+                errInvalidIp: "Por favor, introduzca una dirección IP válida.", errDelFailed: "Error al eliminar. Ack: ", 
+                errConnFailed: "Error de conexión. Verifique la IP y la red.", errWsClosed: "Conexión WebSocket cerrada.",
+                confirmDelete1: "Eliminar ", confirmDelete2: " elemento(s) de ", confirmDelete3: "? Esto no se puede deshacer.",
+                confirmCancel: "Cancelar", successDeleted: "Elementos eliminados con éxito."
             },
             it: {
-                title: "Centauri Carbon Manager",
-                setupDesc: "Connettiti direttamente alla stampante per gestire rapidamente file e cronologia.",
-                ipPlaceholder: "IP della stampante (es: 192.168.0.17)",
-                connectBtn: "Connetti",
-                connectingBtn: "Connessione...",
-                tabLocal: "File Locali",
-                tabHistory: "Cronologia",
-                selectAll: "Seleziona tutto",
-                filterPlaceholder: "Filtra (es: *PLA*, benchy*)",
-                deleteBtn: "Elimina",
-                deletingBtn: "Eliminazione...",
-                disconnect: "Disconnetti",
-                loadingData: "Caricamento...",
-                itemsTotal: "elementi totali",
-                showing: "Mostra",
-                of: "di",
-                items: "elementi",
-                noItems: "Nessun elemento trovato.",
-                unknownItem: "Elemento sconosciuto",
-                printDuration: "Durata stampa",
-                errInvalidIp: "Inserire un indirizzo IP valido.",
-                errDelFailed: "Errore durante l'eliminazione. Ack: ",
-                errConnFailed: "Connessione fallita. Verificare IP e rete.",
-                errWsClosed: "Connessione WebSocket chiusa.",
-                confirmDelete1: "Elimina ",
-                confirmDelete2: " elemento/i da ",
-                confirmDelete3: "? Questa operazione è irreversibile."
+                title: "Centauri Carbon Manager", setupDesc: "Connettiti direttamente alla stampante per gestire rapidamente file e cronologia.",
+                ipPlaceholder: "IP della stampante (es: 192.168.0.17)", connectBtn: "Connetti", connectingBtn: "Connessione...",
+                tabLocal: "File Locali", tabHistory: "Cronologia", selectAll: "Seleziona tutto",
+                filterPlaceholder: "Filtra (es: *PLA*, benchy*)", deleteBtn: "Elimina", deletingBtn: "Eliminazione...",
+                disconnect: "Disconnetti", loadingData: "Caricamento...", itemsTotal: "elementi totali", showing: "Mostra",
+                of: "di", items: "elementi", noItems: "Nessun elemento trovato.", unknownItem: "Elemento sconosciuto", printDuration: "Durata stampa",
+                errInvalidIp: "Inserire un indirizzo IP valido.", errDelFailed: "Errore durante l'eliminazione. Ack: ", 
+                errConnFailed: "Connessione fallita. Verificare IP e rete.", errWsClosed: "Connessione WebSocket chiusa.",
+                confirmDelete1: "Elimina ", confirmDelete2: " elemento/i da ", confirmDelete3: "? Questa operazione è irreversibile.",
+                confirmCancel: "Annulla", successDeleted: "Elementi eliminati con successo."
             }
         };
 
-        // Helper function for quick translation lookups
-        function t(key) {
-            return translations[currentLang][key] || key;
-        }
+        // --- Application State (KISS / Centralized) ---
+        const State = {
+            ws: null,
+            activeTab: 'local',
+            items: [],
+            lang: 'en',
+            sortDirection: 1, // 1: asc, -1: desc
+            isConnecting: false
+        };
 
-        // Toggle Theme
-        function toggleDarkMode() {
-            document.body.classList.toggle('dark-mode');
-            localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
-        }
-               
-        // --- Language Handling ---
-        function changeLang(lang) {
-            currentLang = lang;
+        const t = (key) => i18n[State.lang][key] || key;
 
-            // 1. Update the title in the browser
-            document.title = t('title');
+        // --- Core Application Logic ---
+        const App = {
+            init() {
+                if (localStorage.getItem('darkMode') === 'true') document.body.classList.add('dark-mode');
+                const savedLang = localStorage.getItem('lang') || 'en';
+                document.getElementById('langSelect').value = savedLang;
+                this.changeLang(savedLang);
 
-            // 2. Update the title text inside the span (keeping the icon outside)
-            const titleSpan = document.querySelector('h2 span[data-i18n="title"]');
-            if (titleSpan) {
-                titleSpan.innerText = t('title');
-            }
-
-            // 3. Update all other static elements with data-i18n attribute
-            document.querySelectorAll('[data-i18n]:not(h2 span)').forEach(el => {
-                const key = el.getAttribute('data-i18n');
-                // Handle input placeholders specifically
-                if (el.tagName === 'INPUT' && el.placeholder) {
-                    el.placeholder = t(key);
-                } else if (el.tagName !== 'SPAN' || el.parentElement.tagName !== 'H2') {
-                    // Update innerText for buttons, tabs, etc.
-                    el.innerText = t(key);
+                // Auto-connect if IP is provided via URL parameter (e.g. ?ip=192.168.0.17)
+                const urlParams = new URLSearchParams(window.location.search);
+                const autoIp = urlParams.get('ip');
+                if (autoIp) {
+                    document.getElementById('ipInput').value = autoIp;
+                    setTimeout(() => this.connect(), 100);
                 }
-            });
-            
-            // 4. Update dynamic text and state
-            if (document.getElementById('mainScreen').style.display === 'block') {
-                updateDeleteButton();
-                filterItems(); // Refreshes item count string
+            },
+
+            // --- UI Modals & Toasts (No more alerts!) ---
+            showToast(msg, type = 'info') {
+                const container = document.getElementById('toast-container');
+                const toast = document.createElement('div');
+                toast.className = `toast ${type}`;
+                const icon = type === 'error' ? '⚠️' : type === 'success' ? '✅' : 'ℹ️';
+                toast.innerHTML = `<span>${icon}</span> <span>${msg}</span>`;
+                container.appendChild(toast);
                 
-                // Refresh list to translate "No items found" if the list is empty
-                if (currentItemCount === 0) {
-                    document.getElementById('itemList').innerHTML = `<li><em style="color:var(--text-muted);">${t('noItems')}</em></li>`;
+                // Trigger reflow for animation
+                setTimeout(() => toast.classList.add('show'), 10);
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                    setTimeout(() => toast.remove(), 300);
+                }, 4000);
+            },
+
+            asyncConfirm(message) {
+                return new Promise(resolve => {
+                    const modal = document.getElementById('confirmModal');
+                    document.getElementById('modalText').innerText = message;
+                    modal.classList.add('show');
+
+                    const cleanup = (result) => {
+                        modal.classList.remove('show');
+                        document.getElementById('modalConfirm').onclick = null;
+                        document.getElementById('modalCancel').onclick = null;
+                        resolve(result);
+                    };
+
+                    document.getElementById('modalConfirm').onclick = () => cleanup(true);
+                    document.getElementById('modalCancel').onclick = () => cleanup(false);
+                });
+            },
+
+            // --- Localization ---
+            changeLang(lang) {
+                State.lang = lang;
+                localStorage.setItem('lang', lang);
+                document.title = t('title');
+                
+                document.querySelectorAll('[data-i18n]').forEach(el => {
+                    const key = el.getAttribute('data-i18n');
+                    if (el.tagName === 'INPUT' && el.placeholder) el.placeholder = t(key);
+                    else el.innerText = t(key);
+                });
+
+                if (document.getElementById('mainScreen').style.display === 'block') {
+                    this.updateDeleteButton();
+                    this.filterItems();
+                    if (State.items.length === 0) this.renderList([], State.activeTab);
                 } else {
-                    // Re-render items to translate file labels if needed
-                    // Only necessary if we want labels to translate dynamically
+                    this.setConnectingState(State.isConnecting);
                 }
-            } else {
-                setUIStateConnecting(ws && ws.readyState === WebSocket.CONNECTING);
-            }
-        }
+            },
 
-        // --- WebSocket Logic ---
-        function createPayload(cmd, data) {
-            return {
-                Id: "",
-                Data: {
-                    Cmd: cmd,
-                    Data: data,
-                    RequestID: crypto.randomUUID().replace(/-/g, ''),
-                    MainboardID: "",
-                    TimeStamp: Date.now(),
-                    From: 1
+            toggleDarkMode() {
+                document.body.classList.toggle('dark-mode');
+                localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
+            },
+
+            // --- WebSocket Logic ---
+            createPayload(cmd, data) {
+                return { Id: "", Data: { Cmd: cmd, Data: data, RequestID: crypto.randomUUID().replace(/-/g, ''), TimeStamp: Date.now(), From: 1 } };
+            },
+
+            setConnectingState(isConnecting) {
+                State.isConnecting = isConnecting;
+                const btn = document.getElementById('connectBtn');
+                btn.disabled = isConnecting;
+                document.getElementById('ipInput').disabled = isConnecting;
+                btn.querySelector('span').innerText = isConnecting ? t('connectingBtn') : t('connectBtn');
+            },
+
+            connect() {
+                const ip = document.getElementById('ipInput').value.trim();
+                if (!ip) return this.showToast(t('errInvalidIp'), 'error');
+
+                this.setConnectingState(true);
+                if (State.ws) State.ws.close();
+
+                try {
+                    State.ws = new WebSocket(`ws://${ip}/websocket`);
+                } catch (e) {
+                    return this.showToast(t('errConnFailed'), 'error');
                 }
-            };
-        }
+                
+                State.ws.onopen = () => {
+                    this.setConnectingState(false);
+                    document.getElementById('setupScreen').style.display = 'none';
+                    document.getElementById('mainScreen').style.display = 'block';
+                    
+                    // Tving hentning af data ved første forbindelse. 
+                    // switchTab afbryder, hvis vi allerede ER på 'local'.
+                    if (State.activeTab === 'local') {
+                        this.fetchData();
+                    } else {
+                        this.switchTab('local');
+                    }
+                };
 
-        function setUIStateConnecting(isConnecting) {
-            const btn = document.getElementById('connectBtn');
-            const input = document.getElementById('ipInput');
-            btn.disabled = isConnecting;
-            input.disabled = isConnecting;
-            btn.innerText = isConnecting ? t('connectingBtn') : t('connectBtn');
-            if (isConnecting) document.getElementById('errorMsg').innerText = "";
-        }
+                State.ws.onmessage = (event) => this.handleMessage(JSON.parse(event.data));
 
-        function switchScreen(toMain) {
-            document.getElementById('setupScreen').style.display = toMain ? 'none' : 'flex';
-            document.getElementById('mainScreen').style.display = toMain ? 'block' : 'none';
-        }
+                State.ws.onerror = () => {
+                    this.setConnectingState(false);
+                    this.showToast(t('errConnFailed'), 'error');
+                };
 
-        function connect() {
-            const ip = document.getElementById('ipInput').value.trim();
-            if (!ip) { alert(t('errInvalidIp')); return; }
+                State.ws.onclose = () => {
+                    this.setConnectingState(false);
+                    if (document.getElementById('mainScreen').style.display === 'block') {
+                        this.showToast(t('errWsClosed'), 'error');
+                    }
+                    document.getElementById('setupScreen').style.display = 'flex';
+                    document.getElementById('mainScreen').style.display = 'none';
+                };
+            },
 
-            setUIStateConnecting(true);
-            if (ws) { ws.close(); }
+            disconnect() {
+                if (State.ws) State.ws.close();
+            },
 
-            ws = new WebSocket(`ws://${ip}/websocket`);
-            
-            ws.onopen = () => {
-                setUIStateConnecting(false);
-                switchScreen(true);
-                activeTab = 'local';
-                updateTabUI();
-                fetchData();
-            };
-
-            ws.onmessage = (event) => {
-                const res = JSON.parse(event.data);
+            handleMessage(res) {
                 const dataBlock = res.Data || {};
                 const cmd = dataBlock.Cmd;
                 
-                if (cmd === 258 && activeTab === 'local') {
-                    renderList(dataBlock.Data?.FileList || [], 'local');
-                } else if (cmd === 259) {
-                    if (dataBlock.Data?.Ack === 0) fetchData();
-                    else alert(t('errDelFailed') + dataBlock.Data?.Ack);
-                } else if (cmd === 320 && activeTab === 'history') {
+                if (cmd === 258 && State.activeTab === 'local') {
+                    this.renderList(dataBlock.Data?.FileList || [], 'local');
+                } else if (cmd === 320 && State.activeTab === 'history') {
                     const historyIds = dataBlock.Data?.HistoryData || [];
-                    if (historyIds.length > 0) {
-                        // Forward request to fetch full details
-                        ws.send(JSON.stringify(createPayload(321, { Id: historyIds })));
+                    if (historyIds.length > 0) State.ws.send(JSON.stringify(this.createPayload(321, { Id: historyIds })));
+                    else this.renderList([], 'history');
+                } else if (cmd === 321 && State.activeTab === 'history') {
+                    this.renderList(dataBlock.Data?.HistoryDetailList || [], 'history');
+                } else if (cmd === 259 || cmd === 322) { // Deletion Ack
+                    if (dataBlock.Data?.Ack === 0) {
+                        this.showToast(t('successDeleted'), 'success');
+                        this.fetchData();
                     } else {
-                        renderList([], 'history');
-                    }
-                } else if (cmd === 321 && activeTab === 'history') {
-                    renderList(dataBlock.Data?.HistoryDetailList || [], 'history');
-                } else if (cmd === 322) {
-                    if (dataBlock.Data?.Ack === 0) fetchData();
-                    else alert(t('errDelFailed') + dataBlock.Data?.Ack);
-                }
-            };
-
-            ws.onerror = (error) => {
-                setUIStateConnecting(false);
-                document.getElementById('errorMsg').innerText = t('errConnFailed');
-            };
-
-            ws.onclose = () => {
-                setUIStateConnecting(false);
-                if (document.getElementById('mainScreen').style.display === 'block') {
-                    alert(t('errWsClosed'));
-                }
-                switchScreen(false);
-            };
-        }
-
-        function disconnect() { if (ws) ws.close(); }
-
-        // --- UI Operations ---
-        function switchTab(tabName) {
-            if (activeTab === tabName) return;
-            activeTab = tabName;
-            document.getElementById('searchInput').value = "";
-            updateTabUI();
-            fetchData();
-        }
-
-        function updateTabUI() {
-            document.getElementById('tab-local').className = activeTab === 'local' ? 'tab active' : 'tab';
-            document.getElementById('tab-history').className = activeTab === 'history' ? 'tab active' : 'tab';
-            document.getElementById('selectAll').checked = false;
-            updateDeleteButton();
-        }
-
-        function fetchData() {
-            const list = document.getElementById('itemList');
-            list.innerHTML = `<li><span style="color:var(--text-muted);">${t('loadingData')}</span></li>`;
-            document.getElementById('itemCount').innerText = t('loadingData');
-            
-            if (activeTab === 'local') {
-                ws.send(JSON.stringify(createPayload(258, { Url: "/local" })));
-            } else if (activeTab === 'history') {
-                ws.send(JSON.stringify(createPayload(320, {})));
-            }
-        }
-
-        function formatSize(bytes) {
-            if (!bytes || bytes === 0) return '0 B';
-            const k = 1024;
-            const sizes = ['B', 'KB', 'MB', 'GB'];
-            const i = Math.floor(Math.log(bytes) / Math.log(k));
-            return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
-        }
-
-        function renderList(items, mode) {
-            if (mode !== activeTab) return;
-
-            const list = document.getElementById('itemList');
-            list.innerHTML = '';
-            currentItemCount = items.length;
-            
-            if (items.length === 0) {
-                list.innerHTML = `<li><em style="color:var(--text-muted);">${t('noItems')}</em></li>`;
-                document.getElementById('itemCount').innerText = `0 ${t('itemsTotal')}`;
-                updateDeleteButton();
-                return;
-            }
-            
-            items.forEach((item, index) => {
-                const itemValue = mode === 'local' ? item.name : item.TaskId;
-                let itemLabel = mode === 'local' ? item.name : item.TaskName;
-                if (!itemValue) return;
-                
-                // Strip unnecessary folder prefixes
-                itemLabel = itemLabel.replace('/local/', '').replace('/history/', '');
-                
-                // Hent filstørrelse (kun for local)
-                const fileSize = (mode === 'local' && item.FileSize) ? formatSize(item.FileSize) : '';
-                
-                const li = document.createElement('li');
-                li.setAttribute('data-search-term', itemLabel.toLowerCase());
-                li.setAttribute('data-size', item.FileSize || 0);
-                
-                const cb = document.createElement('input');
-                cb.type = 'checkbox';
-                cb.value = itemValue;
-                cb.id = `item_${index}`;
-                cb.onchange = () => {
-                    handleSingleCheckboxChange();
-                    updateDeleteButton();
-                };
-                
-                const label = document.createElement('label');
-                label.htmlFor = `item_${index}`;
-                label.style.width = "100%";
-                label.style.paddingLeft = "10px";
-                label.style.cursor = "pointer";
-                
-                // Layout: Navn og størrelse i toppen
-                label.innerHTML = `
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <span style="font-weight:500;">${itemLabel || t('unknownItem')}</span>
-                        <span style="font-size:0.85em; color:var(--text-muted); font-family:monospace;">${fileSize}</span>
-                    </div>
-                `;
-                
-                // Tilføj print duration hvis det er history
-                if (mode === 'history' && item.BeginTime && item.EndTime) {
-                    const durationSecs = item.EndTime - item.BeginTime;
-                    if (durationSecs > 0) {
-                        const hours = Math.floor(durationSecs / 3600);
-                        const minutes = Math.floor((durationSecs % 3600) / 60);
-                        let durationStr = (hours > 0 ? `${hours}h ` : '') + `${minutes}m`;
-                        
-                        label.innerHTML += `<div class="item-subtitle" style="font-size:0.8em; color:var(--text-muted); margin-top:4px;">${t('printDuration')}: ${durationStr}</div>`;
+                        this.showToast(t('errDelFailed') + dataBlock.Data?.Ack, 'error');
+                        this.updateDeleteButton(false); // reset button UI
                     }
                 }
+            },
+
+            // --- Data & DOM Rendering ---
+            switchTab(tabName) {
+                if (State.activeTab === tabName) return;
+                State.activeTab = tabName;
+                document.getElementById('searchInput').value = "";
                 
-                li.appendChild(cb);
-                li.appendChild(label);
-                list.appendChild(li);
-            });
-            
-            filterItems(); // Re-apply filter
-        }
+                document.getElementById('tab-local').className = tabName === 'local' ? 'tab active' : 'tab';
+                document.getElementById('tab-history').className = tabName === 'history' ? 'tab active' : 'tab';
+                document.getElementById('selectAll').checked = false;
+                
+                this.updateDeleteButton();
+                this.fetchData();
+            },
 
-        function filterItems() {
-            const query = document.getElementById('searchInput').value.toLowerCase().trim();
-            const listItems = document.querySelectorAll('#itemList li');
-            let visibleCount = 0;
+            fetchData() {
+                document.getElementById('itemList').innerHTML = `<li><span style="color:var(--text-muted);">${t('loadingData')}</span></li>`;
+                document.getElementById('itemCount').innerText = t('loadingData');
+                
+                if (State.activeTab === 'local') State.ws.send(JSON.stringify(this.createPayload(258, { Url: "/local" })));
+                else State.ws.send(JSON.stringify(this.createPayload(320, {})));
+            },
 
-            if (!query) {
-                listItems.forEach(li => {
-                    li.style.display = 'flex';
-                    visibleCount++;
+            formatSize(bytes) {
+                if (!bytes) return '0 B';
+                const k = 1024, sizes = ['B', 'KB', 'MB', 'GB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+            },
+
+            renderList(items, mode) {
+                if (mode !== State.activeTab) return;
+                State.items = items;
+                
+                const list = document.getElementById('itemList');
+                list.innerHTML = '';
+                
+                if (items.length === 0) {
+                    list.innerHTML = `<li><em style="color:var(--text-muted);">${t('noItems')}</em></li>`;
+                    document.getElementById('itemCount').innerText = `0 ${t('itemsTotal')}`;
+                    this.updateDeleteButton();
+                    return;
+                }
+                
+                // DRY DOM Manipulation via DocumentFragment
+                const fragment = document.createDocumentFragment();
+
+                items.forEach((item, index) => {
+                    const val = mode === 'local' ? item.name : item.TaskId;
+                    let labelTxt = (mode === 'local' ? item.name : item.TaskName) || t('unknownItem');
+                    if (!val) return;
+                    
+                    labelTxt = labelTxt.replace('/local/', '').replace('/history/', '');
+                    const sizeTxt = (mode === 'local' && item.FileSize) ? this.formatSize(item.FileSize) : '';
+                    
+                    const li = document.createElement('li');
+                    li.setAttribute('data-search', labelTxt.toLowerCase());
+                    li.setAttribute('data-size', item.FileSize || 0);
+                    
+                    const cb = document.createElement('input');
+                    cb.type = 'checkbox'; cb.value = val; cb.id = `item_${index}`;
+                    cb.onchange = () => this.handleCheckbox();
+                    
+                    const label = document.createElement('label');
+                    label.htmlFor = cb.id; label.className = 'item-content';
+                    
+                    let html = `<div class="item-header"><span>${labelTxt}</span><span class="item-meta">${sizeTxt}</span></div>`;
+                    
+                    if (mode === 'history' && item.BeginTime && item.EndTime) {
+                        const sec = item.EndTime - item.BeginTime;
+                        if (sec > 0) {
+                            const h = Math.floor(sec / 3600), m = Math.floor((sec % 3600) / 60);
+                            html += `<div class="item-subtitle">${t('printDuration')}: ${h > 0 ? h+'h ' : ''}${m}m</div>`;
+                        }
+                    }
+                    
+                    label.innerHTML = html;
+                    li.appendChild(cb);
+                    li.appendChild(label);
+                    fragment.appendChild(li);
                 });
-            } else {
-                // Convert string to a safe Regex, accommodating * and ? wildcards
-                let regexStr = query.replace(/[.+^${}()|[\]\\]/g, '\\$&'); 
                 
-                // If user explicitly uses wildcards, anchor the search strictly
-                if (query.includes('*') || query.includes('?')) {
-                    regexStr = '^' + regexStr.replace(/\*/g, '.*').replace(/\?/g, '.') + '$';
-                } 
-                
-                let searchRegex;
-                try {
-                    searchRegex = new RegExp(regexStr, 'i');
-                } catch (e) {
-                    searchRegex = new RegExp(''); // Fallback if regex is invalid
-                }
+                list.appendChild(fragment);
+                this.filterItems(); // Apply active filter and count
+            },
+
+            // --- Interactions & Sorting ---
+            getSearchRegex(query) {
+                // Safe wildcard regex generation
+                const escapeRegex = (s) => s.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
+                const str = query.split('*').map(escapeRegex).join('.*');
+                return new RegExp(str, 'i');
+            },
+
+            filterItems() {
+                const query = document.getElementById('searchInput').value.trim();
+                const listItems = document.querySelectorAll('#itemList li[data-search]');
+                let visible = 0;
+
+                const regex = query ? this.getSearchRegex(query) : null;
 
                 listItems.forEach(li => {
-                    const term = li.getAttribute('data-search-term');
-                    if (!term) return;
-
-                    if (searchRegex.test(term)) {
+                    const term = li.getAttribute('data-search');
+                    if (!regex || regex.test(term)) {
                         li.style.display = 'flex';
-                        visibleCount++;
+                        visible++;
                     } else {
                         li.style.display = 'none';
-                        const cb = li.querySelector('input[type="checkbox"]');
-                        if (cb && cb.checked) cb.checked = false; // Deselect if hidden
+                        const cb = li.querySelector('input');
+                        if (cb && cb.checked) cb.checked = false;
                     }
                 });
-            }
 
-            // Update item count UI
-            document.getElementById('itemCount').innerText = 
-                query ? `${t('showing')} ${visibleCount} ${t('of')} ${currentItemCount} ${t('items')}` : `${currentItemCount} ${t('itemsTotal')}`;
-            
-            // Uncheck global toggle if filter applies
-            document.getElementById('selectAll').checked = false;
-            updateDeleteButton();
-        }
-
-        function toggleSelectAll() {
-            const isChecked = document.getElementById('selectAll').checked;
-            const visibleCheckboxes = document.querySelectorAll('#itemList li:not([style*="display: none"]) input[type="checkbox"]');
-            
-            visibleCheckboxes.forEach(cb => { cb.checked = isChecked; });
-            updateDeleteButton();
-        }
-
-        function handleSingleCheckboxChange() {
-            const visibleCheckboxes = Array.from(document.querySelectorAll('#itemList li:not([style*="display: none"]) input[type="checkbox"]'));
-            const allChecked = visibleCheckboxes.length > 0 && visibleCheckboxes.every(cb => cb.checked);
-            document.getElementById('selectAll').checked = allChecked;
-        }
-
-        function updateDeleteButton() {
-            const checkedCount = document.querySelectorAll('#itemList input[type="checkbox"]:checked').length;
-            const deleteBtn = document.getElementById('deleteBtn');
-            
-            if (checkedCount > 0) {
-                deleteBtn.disabled = false;
-                deleteBtn.innerHTML = `<span data-i18n="deleteBtn">${t('deleteBtn')}</span> (${checkedCount})`;
-            } else {
-                deleteBtn.disabled = true;
-                deleteBtn.innerHTML = `<span data-i18n="deleteBtn">${t('deleteBtn')}</span> (0)`;
-            }
-        }
-
-        function deleteSelected() {
-            const checkedBoxes = document.querySelectorAll('#itemList input[type="checkbox"]:checked');
-            const itemsToDelete = Array.from(checkedBoxes).map(cb => cb.value);
-            
-            if (itemsToDelete.length === 0) return;
-            
-            const tabTranslation = activeTab === 'local' ? t('tabLocal') : t('tabHistory');
-            
-            if (confirm(`${t('confirmDelete1')}${itemsToDelete.length}${t('confirmDelete2')}${tabTranslation}${t('confirmDelete3')}`)) {
-                let payload = createPayload(activeTab === 'local' ? 259 : 322, 
-                    activeTab === 'local' ? { FileList: itemsToDelete } : { Id: itemsToDelete }
-                );
+                document.getElementById('itemCount').innerText = query 
+                    ? `${t('showing')} ${visible} ${t('of')} ${State.items.length} ${t('items')}` 
+                    : `${State.items.length} ${t('itemsTotal')}`;
                 
-                ws.send(JSON.stringify(payload));
+                document.getElementById('selectAll').checked = false;
+                this.updateDeleteButton();
+            },
+
+            toggleSelectAll() {
+                const isChecked = document.getElementById('selectAll').checked;
+                document.querySelectorAll('#itemList li:not([style*="display: none"]) input[type="checkbox"]')
+                    .forEach(cb => cb.checked = isChecked);
+                this.updateDeleteButton();
+            },
+
+            handleCheckbox() {
+                const visible = Array.from(document.querySelectorAll('#itemList li:not([style*="display: none"]) input[type="checkbox"]'));
+                document.getElementById('selectAll').checked = visible.length > 0 && visible.every(cb => cb.checked);
+                this.updateDeleteButton();
+            },
+
+            updateDeleteButton(isDeleting = false) {
+                const count = document.querySelectorAll('#itemList input[type="checkbox"]:checked').length;
+                const btn = document.getElementById('deleteBtn');
                 
-                const deleteBtn = document.getElementById('deleteBtn');
-                deleteBtn.disabled = true;
-                deleteBtn.innerHTML = `<span data-i18n="deletingBtn">${t('deletingBtn')}</span>`;
+                if (isDeleting) {
+                    btn.disabled = true;
+                    btn.innerHTML = `<span data-i18n="deletingBtn">${t('deletingBtn')}</span>`;
+                    return;
+                }
+
+                btn.disabled = count === 0;
+                btn.innerHTML = `<span data-i18n="deleteBtn">${t('deleteBtn')}</span> <span>(${count})</span>`;
+            },
+
+            async deleteSelected() {
+                const checkedBoxes = document.querySelectorAll('#itemList input[type="checkbox"]:checked');
+                const ids = Array.from(checkedBoxes).map(cb => cb.value);
+                if (ids.length === 0) return;
+                
+                const tabName = State.activeTab === 'local' ? t('tabLocal') : t('tabHistory');
+                const msg = `${t('confirmDelete1')}${ids.length}${t('confirmDelete2')}${tabName}${t('confirmDelete3')}`;
+                
+                if (await this.asyncConfirm(msg)) {
+                    this.updateDeleteButton(true);
+                    const cmd = State.activeTab === 'local' ? 259 : 322;
+                    const data = State.activeTab === 'local' ? { FileList: ids } : { Id: ids };
+                    State.ws.send(JSON.stringify(this.createPayload(cmd, data)));
+                }
+            },
+
+            sortList(key) {
+                const list = document.getElementById('itemList');
+                const items = Array.from(list.querySelectorAll('li[data-search]'));
+                if (!items.length) return;
+
+                items.sort((a, b) => {
+                    const v1 = key === 'name' ? a.getAttribute('data-search') : parseInt(a.getAttribute('data-size'));
+                    const v2 = key === 'name' ? b.getAttribute('data-search') : parseInt(b.getAttribute('data-size'));
+                    
+                    if (key === 'name') return v1.localeCompare(v2) * State.sortDirection;
+                    return (v1 - v2) * State.sortDirection;
+                });
+
+                State.sortDirection *= -1; // Flip for next click
+                const fragment = document.createDocumentFragment();
+                items.forEach(li => fragment.appendChild(li));
+                list.appendChild(fragment); // Appending re-orders them automatically
             }
-        }
+        };
 
-        function sortList(key) {
-            const list = document.getElementById('itemList');
-            let items = Array.from(list.children).map(li => {
-                // Vi gemmer rådata i et objekt for at kunne sortere det
-                return {
-                    element: li,
-                    name: li.getAttribute('data-search-term'),
-                    size: parseInt(li.getAttribute('data-size') || 0)
-                };
-            });
-
-            items.sort((a, b) => {
-                if (key === 'name') return a.name.localeCompare(b.name) * sortDirection;
-                if (key === 'size') return (a.size - b.size) * sortDirection;
-            });
-
-            sortDirection *= -1; // Skift retning næste gang
-            items.forEach(item => list.appendChild(item.element));
-        }
-
-        // Initialize translations on first load
-        changeLang('en');
-
-        if (localStorage.getItem('darkMode') === 'true') document.body.classList.add('dark-mode')
-
-        let sortDirection = 1; // 1 for asc, -1 for desc
+        // Initialize App
+        App.init();
     </script>
 </body>
 </html>
