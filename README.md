@@ -1,4 +1,4 @@
-# Centauri Carbon Manager 🚀
+# Centauri Carbon Manager
 
 A lightning-fast, zero-dependency, local Web UI replacement for the Elegoo Centauri Carbon 3D printer. Built strictly on **KISS** (Keep It Simple, Stupid) and **DRY** (Don't Repeat Yourself) principles.
 
