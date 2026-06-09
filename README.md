@@ -22,7 +22,7 @@ Because it is built as a single, standalone HTML file with Vanilla JavaScript, t
 * **Multi-Language & Theming:** Supports 6 languages (EN, DA, DE, FR, ES, IT) and Dark/Light mode.
 
 ## 🛠️ Usage
-1. Download the [`centauri-manager.html`](https://github.com/J-Lindvig/Centauri-Carbon-Manager/releases/latest/download/centauri-manager.html) file.
+1. Download the [`centauri-manager.html`](https://github.com/J-Lindvig/Centauri-Carbon-Manager/blob/main/centauri-manager.html) file.
 2. Open it in any modern web browser.
 3. Enter your printer's IP address and click **Connect**.
 
