@@ -212,6 +212,17 @@
             text-align: center; 
         }
 
+        .footer a {
+            color: var(--primary);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .footer a:hover {
+            color: var(--primary-hover);
+            text-decoration: underline;
+        }
+
         /* --- Custom Modal UI --- */
         .modal-overlay {
             position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(2px);
@@ -227,6 +238,19 @@
         .modal-overlay.show .modal { transform: scale(1); }
         .modal h3 { margin-top: 0; color: var(--text-main); }
         .modal-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px; }
+
+        /* --- API Manual specific formatting --- */
+        .api-list { list-style: none; padding: 0; margin: 0; }
+        .api-list li { 
+            padding: 10px 0; border-bottom: 1px solid var(--border); 
+            display: flex; flex-direction: column; gap: 4px; 
+            align-items: flex-start; background: transparent; pointer-events: none;
+        }
+        .api-list li:hover { background: transparent; }
+        .api-list code { 
+            background: rgba(59, 130, 246, 0.1); color: var(--primary); 
+            padding: 2px 6px; border-radius: 4px; font-family: monospace; font-weight: bold;
+        }
 
         /* --- Toast Notifications --- */
         #toast-container {
@@ -247,12 +271,15 @@
 <body>
     <div class="container">
         <div class="header-top">
-            <h2>
-                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
-                    <path d="M12.686 7.479q.81 1.244 1.476 2.505c.64-1.217 1.849-2.086 3.328-2.086c2.217 0 3.826 1.954 3.826 4.102s-1.609 4.102-3.826 4.102c-.656 0-1.26-.171-1.784-.467l-.001-.001a4 4 0 0 1-1.509-1.553c-.484-.804-.725-1.706-.991-2.657c-.598-2.134-1.252-3.773-3.194-4.988a6.56 6.56 0 0 0-3.501-.985C2.815 5.451 0 8.323 0 12c0 3.727 2.761 6.549 6.51 6.549c1.955 0 3.639-.766 4.805-2.027a31 31 0 0 1-1.477-2.505c-.641 1.217-1.849 2.085-3.328 2.085c-2.218 0-3.827-1.953-3.827-4.102S4.292 7.898 6.51 7.898c.655 0 1.26.171 1.783.469h.001c.635.36 1.154.904 1.509 1.553c.574.951.807 2.041 1.144 3.188c.555 1.89 1.285 3.339 3.002 4.432a6.55 6.55 0 0 0 3.541 1.009c3.694 0 6.51-2.872 6.51-6.549c0-3.727-2.76-6.549-6.51-6.549c-1.954 0-3.64.766-4.804 2.028"/>
-                </svg>
-                <span data-i18n="title">Centauri Carbon Manager</span>
-            </h2>
+            <div style="display: flex; flex-direction: column; flex: 1;">
+                <h2>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
+                        <path fill="currentColor" d="M12.686 7.479q.81 1.244 1.476 2.505c.64-1.217 1.849-2.086 3.328-2.086c2.217 0 3.826 1.954 3.826 4.102s-1.609 4.102-3.826 4.102c-.656 0-1.26-.171-1.784-.467l-.001-.001a4 4 0 0 1-1.509-1.553c-.484-.804-.725-1.706-.991-2.657c-.598-2.134-1.252-3.773-3.194-4.988a6.56 6.56 0 0 0-3.501-.985C2.815 5.451 0 8.323 0 12c0 3.727 2.761 6.549 6.51 6.549c1.955 0 3.639-.766 4.805-2.027a31 31 0 0 1-1.477-2.505c-.641 1.217-1.849 2.085-3.328 2.085c-2.218 0-3.827-1.953-3.827-4.102S4.292 7.898 6.51 7.898c.655 0 1.26.171 1.783.469h.001c.635.36 1.154.904 1.509 1.553c.574.951.807 2.041 1.144 3.188c.555 1.89 1.285 3.339 3.002 4.432a6.55 6.55 0 0 0 3.541 1.009c3.694 0 6.51-2.872 6.51-6.549c0-3.727-2.76-6.549-6.51-6.549c-1.954 0-3.64.766-4.804 2.028"/>
+                    </svg>
+                    <span data-i18n="title">Centauri Carbon Manager</span>
+                </h2>
+                <span id="printerInfo" style="font-size: 13px; color: var(--text-muted); margin-left: 44px; margin-top: 2px; font-weight: 500;"></span>
+            </div>
             <div class="lang-select-group">
                 <button class="btn-outline btn-icon" onclick="App.toggleDarkMode()" aria-label="Toggle Dark Mode">🌓</button>
                 <select id="langSelect" onchange="App.changeLang(this.value)">
@@ -266,7 +293,6 @@
             </div>
         </div>
         
-        <!-- Setup Screen -->
         <div id="setupScreen">
             <p style="margin: 0; font-size: 15px; color: var(--text-muted);" data-i18n="setupDesc">Connect directly to your printer to manage files and history rapidly.</p>
             <div class="input-group">
@@ -277,14 +303,12 @@
             </div>
         </div>
 
-        <!-- Main Content -->
         <div id="mainScreen">
             <div class="tabs">
                 <button class="tab active" id="tab-local" onclick="App.switchTab('local')" data-i18n="tabLocal">Local Files</button>
                 <button class="tab" id="tab-history" onclick="App.switchTab('history')" data-i18n="tabHistory">Print History</button>
             </div>
 
-            <!-- Controls Bar -->
             <div class="controls-bar">
                 <label class="select-all-wrapper">
                     <input type="checkbox" id="selectAll" onclick="App.toggleSelectAll()"> 
@@ -311,6 +335,7 @@
                 <div style="display: flex; gap: 10px;">
                     <button class="btn-outline" onclick="App.disconnect()" data-i18n="disconnect">Disconnect</button>
                     <button class="btn-outline" onclick="App.openWebUI()" data-i18n="openWebUI">Web UI ↗</button>
+                    <button class="btn-outline" onclick="App.openLiveCamera()" data-i18n="liveCamera">Live 📷</button>
                 </div>
                 <span id="itemCount" data-i18n="loadingData">Loading data...</span>
             </div>
@@ -318,10 +343,9 @@
     </div>
     
     <div class="footer">
-        Created by <strong><a href="https://broby-it.dk" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: none;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">Broby IT</a></strong> | Centauri Carbon Manager v<span id="appVersion"></span>
+        Created by <strong><a href="https://broby-it.dk" target="_blank" rel="noopener noreferrer">Broby IT</a></strong> | Centauri Carbon Manager v<span id="appVersion"></span> | <a href="#" onclick="App.openApiModal(); return false;" data-i18n="apiManualLink">SDCP API Reference</a>
     </div>
 
-    <!-- Custom Modal -->
     <div id="confirmModal" class="modal-overlay">
         <div class="modal">
             <h3 id="modalTitle">Confirm</h3>
@@ -333,112 +357,188 @@
         </div>
     </div>
 
-    <!-- Toast Container -->
+    <div id="videoModal" class="modal-overlay" onclick="if(event.target === this) App.closeVideoModal()">
+        <div class="modal" style="max-width: 640px; padding: 16px; background: #000; text-align: center;">
+            <div id="videoContainer" style="width: 100%; min-height: 300px; display: flex; align-items: center; justify-content: center;"></div>
+            <button class="btn-outline" onclick="App.closeVideoModal()" style="margin-top: 16px; width: 100%; border-color: #374151; color: white;" data-i18n="closeVideo">Close Video</button>
+        </div>
+    </div>
+
+    <div id="apiModal" class="modal-overlay" onclick="if(event.target === this) App.closeApiModal()">
+        <div class="modal" style="max-width: 500px; text-align: left; max-height: 85vh; overflow-y: auto;">
+            <h3 style="margin-top: 0; display: flex; justify-content: space-between; align-items: center; color: var(--text-main);">
+                <span data-i18n="apiManualTitle">SDCP API Reference</span>
+                <button class="btn-icon" onclick="App.closeApiModal()" style="background:transparent; border:none; color:var(--text-muted); cursor:pointer; font-size:18px;">✖</button>
+            </h3>
+            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;" data-i18n="apiManualDesc">Reverse-engineered WebSocket commands for the Elegoo SDCP Protocol.</p>
+            
+            <ul class="api-list">
+                <li>
+                    <div><code>CMD 0</code> <strong>Telemetry</strong></div>
+                    <span style="font-size: 12px; color: var(--text-muted);">Real-time machine status (Temperatures, fan speeds, XYZ coordinates, print progress). Sent asynchronously during print.</span>
+                </li>
+                <li>
+                    <div><code>CMD 1</code> <strong>Attributes</strong></div>
+                    <span style="font-size: 12px; color: var(--text-muted);">Static machine properties (Brand, Model, IP, MAC, Firmware version, Build volume, Free memory).</span>
+                </li>
+                <li>
+                    <div><code>CMD 134</code> <strong>Heartbeat / Ping</strong></div>
+                    <span style="font-size: 12px; color: var(--text-muted);">Used to keep the WebSocket connection alive and synchronize internal timers.</span>
+                </li>
+                <li>
+                    <div><code>CMD 258</code> <strong>Get File List</strong></div>
+                    <span style="font-size: 12px; color: var(--text-muted);">Retrieves an array of GCODE files from a specified path. Payload requires <code>{ "Url": "/local" }</code>.</span>
+                </li>
+                <li>
+                    <div><code>CMD 259</code> <strong>Delete File</strong></div>
+                    <span style="font-size: 12px; color: var(--text-muted);">Deletes local file(s). Payload requires <code>{ "FileList": ["/local/file.gcode"] }</code>.</span>
+                </li>
+                <li>
+                    <div><code>CMD 320</code> <strong>Get History IDs</strong></div>
+                    <span style="font-size: 12px; color: var(--text-muted);">Requests an array of unique UUIDs for all saved print history records.</span>
+                </li>
+                <li>
+                    <div><code>CMD 321</code> <strong>Get History Details</strong></div>
+                    <span style="font-size: 12px; color: var(--text-muted);">Fetches metadata for specific history IDs (Print time, Thumbnail URL, Timelapse status). Payload: <code>{ "Id": ["uuid"] }</code>.</span>
+                </li>
+                <li>
+                    <div><code>CMD 322</code> <strong>Delete History</strong></div>
+                    <span style="font-size: 12px; color: var(--text-muted);">Removes history log, thumbnail, and associated timelapse video. Payload: <code>{ "Id": ["uuid"] }</code>.</span>
+                </li>
+                <li>
+                    <div><code>CMD 323</code> <strong>Unlock Video for Download</strong></div>
+                    <span style="font-size: 12px; color: var(--text-muted);">Prepares a timelapse MP4 for HTTP transfer by releasing file locks. Payload: <code>{ "Url": ["/local/video.mp4"] }</code>.</span>
+                </li>
+                <li>
+                    <div><code>CMD 386</code> <strong>Live Camera Stream</strong></div>
+                    <span style="font-size: 12px; color: var(--text-muted);">Toggles the MJPEG camera stream on port 3031. Payload: <code>{ "Enable": 1 }</code> to start, <code>0</code> to stop.</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+
     <div id="toast-container"></div>
 
     <script>
         // --- Configuration ---
-        const APP_VERSION = "2.1";
-        // --- Translations (DRY format) ---
+        const APP_VERSION = "2.5";
+
+        // --- Translations Dictionary ---
         const i18n = {
             en: {
                 title: "Centauri Carbon Manager", setupDesc: "Connect directly to your printer to manage files and history rapidly.",
                 ipPlaceholder: "Printer IP (e.g. 192.168.0.17)", connectBtn: "Connect", connectingBtn: "Connecting...",
                 tabLocal: "Local Files", tabHistory: "Print History", selectAll: "Select All",
                 filterPlaceholder: "Filter (e.g. *PLA*, benchy*)", deleteBtn: "Delete", deletingBtn: "Deleting...",
-                disconnect: "Disconnect", openWebUI: "Web UI ↗", loadingData: "Loading data...", itemsTotal: "items total", showing: "Showing",
+                disconnect: "Disconnect", openWebUI: "Web UI ↗", liveCamera: "Live 📷", closeVideo: "Close Video", loadingData: "Loading data...", itemsTotal: "items total", showing: "Showing",
                 of: "of", items: "items", noItems: "No items found.", unknownItem: "Unknown item", printDuration: "Print Duration",
                 errInvalidIp: "Invalid IP address provided.", errDelFailed: "Deletion failed. Printer Ack: ", 
                 errConnFailed: "Connection failed. Verify printer IP and local network.", errWsClosed: "WebSocket connection closed.",
                 confirmDelete1: "Delete ", confirmDelete2: " item(s) from ", confirmDelete3: "? This cannot be undone.",
-                confirmCancel: "Cancel", successDeleted: "Items deleted successfully."
+                confirmCancel: "Cancel", successDeleted: "Items deleted successfully.",
+                apiManualLink: "SDCP API Reference", apiManualTitle: "SDCP API Reference", apiManualDesc: "Reverse-engineered WebSocket commands for the Elegoo SDCP Protocol."
             },
             da: {
                 title: "Centauri Carbon Manager", setupDesc: "Opret forbindelse direkte til din printer for lynhurtigt at slette filer og historik.",
                 ipPlaceholder: "Printer IP (f.eks. 192.168.0.17)", connectBtn: "Forbind", connectingBtn: "Forbinder...",
                 tabLocal: "Lokale Filer", tabHistory: "Print Historik", selectAll: "Vælg alle",
                 filterPlaceholder: "Filtrér (f.eks. *PLA*, benchy*)", deleteBtn: "Slet", deletingBtn: "Sletter...",
-                disconnect: "Afbryd", openWebUI: "Web UI ↗", loadingData: "Indlæser data...", itemsTotal: "elementer i alt", showing: "Viser",
+                disconnect: "Afbryd", openWebUI: "Web UI ↗", liveCamera: "Live 📷", closeVideo: "Luk Video", loadingData: "Indlæser data...", itemsTotal: "elementer i alt", showing: "Viser",
                 of: "af", items: "elementer", noItems: "Ingen elementer fundet.", unknownItem: "Ukendt element", printDuration: "Print varighed",
                 errInvalidIp: "Invalid IP address provided.", errDelFailed: "Deletion failed. Printer Ack: ", 
                 errConnFailed: "Connection failed. Verify printer IP and local network.", errWsClosed: "WebSocket connection closed.",
                 confirmDelete1: "Slet ", confirmDelete2: " element(er) fra ", confirmDelete3: "? Dette kan ikke fortrydes.",
-                confirmCancel: "Annuller", successDeleted: "Elementer slettet succesfuldt."
+                confirmCancel: "Annuller", successDeleted: "Elementer slettet succesfuldt.",
+                apiManualLink: "SDCP API Reference", apiManualTitle: "SDCP API Reference", apiManualDesc: "Reverse-engineered WebSocket-kommandoer til Elegoo SDCP Protokollen."
             },
             de: {
                 title: "Centauri Carbon Manager", setupDesc: "Verbinden Sie sich direkt mit Ihrem Drucker, um Dateien und Historie schnell zu verwalten.",
                 ipPlaceholder: "Drucker IP (z.B. 192.168.0.17)", connectBtn: "Verbinden", connectingBtn: "Verbinde...",
                 tabLocal: "Lokale Dateien", tabHistory: "Druckhistorie", selectAll: "Alle auswählen",
                 filterPlaceholder: "Filter (z.B. *PLA*, benchy*)", deleteBtn: "Löschen", deletingBtn: "Lösche...",
-                disconnect: "Trennen", openWebUI: "Web UI ↗", loadingData: "Daten werden geladen...", itemsTotal: "Elemente insgesamt", showing: "Zeige",
+                disconnect: "Trennen", openWebUI: "Web UI ↗", liveCamera: "Live 📷", closeVideo: "Video Schließen", loadingData: "Daten werden geladen...", itemsTotal: "Elemente insgesamt", showing: "Zeige",
                 of: "von", items: "Elementen", noItems: "Keine Elemente gefunden.", unknownItem: "Unbekanntes Element", printDuration: "Druckdauer",
                 errInvalidIp: "Invalid IP address provided.", errDelFailed: "Deletion failed. Printer Ack: ", 
                 errConnFailed: "Connection failed. Verify printer IP and local network.", errWsClosed: "WebSocket connection closed.",
                 confirmDelete1: "Löschen Sie ", confirmDelete2: " Element(e) aus ", confirmDelete3: "? Dies kann nicht rückgängig gemacht werden.",
-                confirmCancel: "Abbrechen", successDeleted: "Elemente erfolgreich gelöscht."
+                confirmCancel: "Abbrechen", successDeleted: "Elemente erfolgreich gelöscht.",
+                apiManualLink: "SDCP API Referenz", apiManualTitle: "SDCP API Referenz", apiManualDesc: "Reverse-engineered WebSocket-Befehle für das Elegoo SDCP Protokoll."
             },
             fr: {
                 title: "Centauri Carbon Manager", setupDesc: "Connectez-vous directement à votre imprimante pour gérer rapidement les fichiers et l'historique.",
                 ipPlaceholder: "IP de l'imprimante (ex: 192.168.0.17)", connectBtn: "Connecter", connectingBtn: "Connexion...",
                 tabLocal: "Fichiers Locaux", tabHistory: "Historique", selectAll: "Sélectionner tout",
                 filterPlaceholder: "Filtrer (ex: *PLA*, benchy*)", deleteBtn: "Supprimer", deletingBtn: "Suppression...",
-                disconnect: "Déconnecter", openWebUI: "Web UI ↗", loadingData: "Chargement...", itemsTotal: "éléments au total", showing: "Affichage",
+                disconnect: "Déconnecter", openWebUI: "Web UI ↗", liveCamera: "Live 📷", closeVideo: "Fermer la Vidéo", loadingData: "Chargement...", itemsTotal: "éléments au total", showing: "Affichage",
                 of: "sur", items: "éléments", noItems: "Aucun élément trouvé.", unknownItem: "Élément inconnu", printDuration: "Durée d'impression",
                 errInvalidIp: "Veuillez entrer une adresse IP valide.", errDelFailed: "Échec de la suppression. Ack: ", 
                 errConnFailed: "Échec de la connexion. Vérifiez l'IP et le réseau.", errWsClosed: "Connexion WebSocket fermée.",
                 confirmDelete1: "Supprimer ", confirmDelete2: " élément(s) de ", confirmDelete3: "? Impossible d'annuler.",
-                confirmCancel: "Annuler", successDeleted: "Éléments supprimés avec succès."
+                confirmCancel: "Annuler", successDeleted: "Éléments supprimés avec succès.",
+                apiManualLink: "Référence API SDCP", apiManualTitle: "Référence API SDCP", apiManualDesc: "Commandes WebSocket du protocole Elegoo SDCP obtenues par ingénierie inverse."
             },
             es: {
                 title: "Centauri Carbon Manager", setupDesc: "Conéctese directamente a su impresora para gestionar archivos e historial rápidamente.",
                 ipPlaceholder: "IP de la impresora (ej: 192.168.0.17)", connectBtn: "Conectar", connectingBtn: "Conectando...",
                 tabLocal: "Archivos Locales", tabHistory: "Historial", selectAll: "Seleccionar todo",
                 filterPlaceholder: "Filtrar (ej: *PLA*, benchy*)", deleteBtn: "Eliminar", deletingBtn: "Eliminando...",
-                disconnect: "Desconectar", openWebUI: "Web UI ↗", loadingData: "Cargando datos...", itemsTotal: "elementos en total", showing: "Mostrando",
+                disconnect: "Desconectar", openWebUI: "Web UI ↗", liveCamera: "Live 📷", closeVideo: "Cerrar Video", loadingData: "Cargando datos...", itemsTotal: "elementos en total", showing: "Mostrando",
                 of: "de", items: "elementos", noItems: "No se encontraron elementos.", unknownItem: "Elemento desconocido", printDuration: "Duración de impresión",
                 errInvalidIp: "Por favor, introduzca una dirección IP válida.", errDelFailed: "Error al eliminar. Ack: ", 
                 errConnFailed: "Error de conexión. Verifique la IP y la red.", errWsClosed: "Conexión WebSocket cerrada.",
                 confirmDelete1: "Eliminar ", confirmDelete2: " elemento(s) de ", confirmDelete3: "? Esto no se puede deshacer.",
-                confirmCancel: "Cancelar", successDeleted: "Elementos eliminados con éxito."
+                confirmCancel: "Cancelar", successDeleted: "Elementos eliminados con éxito.",
+                apiManualLink: "Referencia API SDCP", apiManualTitle: "Referencia API SDCP", apiManualDesc: "Comandos WebSocket sometidos a ingeniería inversa para el protocolo Elegoo SDCP."
             },
             it: {
                 title: "Centauri Carbon Manager", setupDesc: "Connettiti direttamente alla stampante per gestire rapidamente file e cronologia.",
                 ipPlaceholder: "IP della stampante (es: 192.168.0.17)", connectBtn: "Connetti", connectingBtn: "Connessione...",
                 tabLocal: "File Locali", tabHistory: "Cronologia", selectAll: "Seleziona tutto",
                 filterPlaceholder: "Filtra (es: *PLA*, benchy*)", deleteBtn: "Elimina", deletingBtn: "Eliminazione...",
-                disconnect: "Disconnetti", openWebUI: "Web UI ↗", loadingData: "Caricamento...", itemsTotal: "elementi totali", showing: "Mostra",
-                of: "di", items: "elementi", noItems: "Nessun elemento trovato.", unknownItem: "Elemento sconosciuto", printDuration: "Durata stampa",
+                disconnect: "Disconnetti", openWebUI: "Web UI ↗", liveCamera: "Live 📷", closeVideo: "Chiudi Video", loadingData: "Caricamento...", itemsTotal: "elementi totali", showing: "Mostra",
+                of: "di", items: "elementi", noItems: "Nessun elemento trovato.", unknownItem: "Un elemento sconosciuto", printDuration: "Durata stampa",
                 errInvalidIp: "Inserire un indirizzo IP valido.", errDelFailed: "Errore durante l'eliminazione. Ack: ", 
                 errConnFailed: "Connessione fallita. Verificare IP e rete.", errWsClosed: "Connessione WebSocket chiusa.",
                 confirmDelete1: "Elimina ", confirmDelete2: " elemento/i da ", confirmDelete3: "? Questa operazione è irreversibile.",
-                confirmCancel: "Annulla", successDeleted: "Elementi eliminati con successo."
+                confirmCancel: "Annulla", successDeleted: "Elementi eliminati con successo.",
+                apiManualLink: "Riferimento API SDCP", apiManualTitle: "Riferimento API SDCP", apiManualDesc: "Comandi WebSocket decodificati per il protocollo Elegoo SDCP."
             }
         };
 
-        // --- Application State (KISS / Centralized) ---
+        // --- Application State ---
+        // Global state container to manage UI tabs, settings, and network cache.
         const State = {
             ws: null,
             activeTab: 'local',
             items: [],
             lang: 'en',
-            sortDirection: 1, // 1: asc, -1: desc
-            isConnecting: false
+            sortDirection: 1, 
+            isConnecting: false,
+            thumbnailMap: {},
+            isCameraRequested: false 
         };
 
+        // Translation helper
         const t = (key) => i18n[State.lang][key] || key;
 
         // --- Core Application Logic ---
         const App = {
+
+            // ==========================================
+            // 1. INITIALIZATION & SETUP
+            // ==========================================
+
             init() {
-                // Update verionnumber
+                // Set application version in footer
                 document.getElementById('appVersion').innerText = APP_VERSION;
 
+                // Load user preferences from local storage
                 if (localStorage.getItem('darkMode') === 'true') document.body.classList.add('dark-mode');
                 const savedLang = localStorage.getItem('lang') || 'en';
                 document.getElementById('langSelect').value = savedLang;
                 this.changeLang(savedLang);
 
-                // Auto-connect if IP is provided via URL parameter (e.g. ?ip=192.168.0.17)
+                // Auto-connect if an IP is provided via URL parameter (e.g., ?ip=192.168.0.17)
                 const urlParams = new URLSearchParams(window.location.search);
                 const autoIp = urlParams.get('ip');
                 if (autoIp) {
@@ -447,7 +547,494 @@
                 }
             },
 
-            // --- UI Modals & Toasts (No more alerts!) ---
+            changeLang(lang) {
+                State.lang = lang;
+                localStorage.setItem('lang', lang);
+                document.title = t('title');
+                
+                // Update all elements containing a data-i18n attribute
+                document.querySelectorAll('[data-i18n]').forEach(el => {
+                    const key = el.getAttribute('data-i18n');
+                    if (el.tagName === 'INPUT' && el.placeholder) {
+                        el.placeholder = t(key);
+                    } else {
+                        el.innerText = t(key);
+                    }
+                });
+
+                // Re-render strings in the active list view without triggering a new network request
+                if (document.getElementById('mainScreen').style.display === 'block') {
+                    this.updateDeleteButton();
+                    this.filterItems();
+                    if (State.items.length === 0) this.renderList([], State.activeTab);
+                } else {
+                    this.setConnectingState(State.isConnecting);
+                }
+            },
+
+            toggleDarkMode() {
+                document.body.classList.toggle('dark-mode');
+                localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
+            },
+
+            // ==========================================
+            // 2. WEBSOCKET & NETWORKING
+            // ==========================================
+
+            createPayload(cmd, data) {
+                // Encapsulates requests in the proprietary SDCP wrapper expected by Elegoo firmware
+                return { 
+                    Id: "", 
+                    Data: { 
+                        Cmd: cmd, 
+                        Data: data, 
+                        RequestID: crypto.randomUUID().replace(/-/g, ''), 
+                        TimeStamp: Date.now(), 
+                        From: 1 
+                    } 
+                };
+            },
+
+            connect() {
+                const ip = document.getElementById('ipInput').value.trim();
+                if (!ip) return this.showToast(t('errInvalidIp'), 'error');
+
+                this.setConnectingState(true);
+                
+                // Close any existing zombie connections
+                if (State.ws) State.ws.close();
+
+                try {
+                    State.ws = new WebSocket(`ws://${ip}/websocket`);
+                } catch (e) {
+                    return this.showToast(t('errConnFailed'), 'error');
+                }
+                
+                State.ws.onopen = () => {
+                    this.setConnectingState(false);
+                    document.getElementById('setupScreen').style.display = 'none';
+                    document.getElementById('mainScreen').style.display = 'block';
+                    
+                    // Request machine attributes immediately (CMD 1) to fetch Model, Firmware, and Memory
+                    State.ws.send(JSON.stringify(this.createPayload(1, {})));
+                    
+                    // Trigger the first data fetch based on the currently active tab
+                    if (State.activeTab === 'local') {
+                        this.fetchData();
+                    } else {
+                        this.switchTab('local');
+                    }
+                };
+
+                // Route all incoming WebSocket messages to the handler
+                State.ws.onmessage = (event) => this.handleMessage(JSON.parse(event.data));
+
+                State.ws.onerror = () => {
+                    this.setConnectingState(false);
+                    this.showToast(t('errConnFailed'), 'error');
+                };
+
+                State.ws.onclose = () => {
+                    this.setConnectingState(false);
+                    if (document.getElementById('mainScreen').style.display === 'block') {
+                        this.showToast(t('errWsClosed'), 'error');
+                    }
+                    // Revert UI to the setup screen
+                    document.getElementById('setupScreen').style.display = 'flex';
+                    document.getElementById('mainScreen').style.display = 'none';
+                };
+            },
+
+            disconnect() {
+                if (State.ws) State.ws.close();
+                document.getElementById('printerInfo').innerText = ""; 
+            },
+
+            fetchData() {
+                // Reset UI state to indicate network activity
+                document.getElementById('itemList').innerHTML = `<li><span style="color:var(--text-muted);">${t('loadingData')}</span></li>`;
+                document.getElementById('itemCount').innerText = t('loadingData');
+                
+                // Fetch history silently in the background (CMD 320) to keep the global thumbnail dictionary updated
+                State.ws.send(JSON.stringify(this.createPayload(320, {})));
+
+                // Fetch local files (CMD 258) if the user is currently viewing the local tab
+                if (State.activeTab === 'local') {
+                    State.ws.send(JSON.stringify(this.createPayload(258, { Url: "/local" })));
+                }
+            },
+
+            handleMessage(res) {
+                // Catch asynchronous status broadcasts from the machine (e.g., CMD 1 response)
+                if (res.Attributes && res.Attributes.MachineName) {
+                    const brand = res.Attributes.BrandName || '';
+                    const model = res.Attributes.MachineName || '';
+                    const fw = res.Attributes.FirmwareVersion ? `| FW: ${res.Attributes.FirmwareVersion}` : '';
+                    
+                    let memoryTxt = '';
+                    if (res.Attributes.RemainingMemory !== undefined) {
+                        memoryTxt = `| Free: ${this.formatSize(res.Attributes.RemainingMemory)}`;
+                    }
+                    
+                    const infoEl = document.getElementById('printerInfo');
+                    if (infoEl) infoEl.innerText = `Connected: ${brand} ${model} ${fw} ${memoryTxt}`;
+                    return;
+                }
+
+                const dataBlock = res.Data || {};
+                const cmd = dataBlock.Cmd;
+                
+                // CMD 258: Received array of local GCODE files
+                if (cmd === 258 && State.activeTab === 'local') {
+                    this.renderList(dataBlock.Data?.FileList || [], 'local');
+                } 
+                // CMD 320: Received array of History IDs. Request the full details (CMD 321) immediately.
+                else if (cmd === 320) {
+                    const historyIds = dataBlock.Data?.HistoryData || [];
+                    if (historyIds.length > 0) {
+                        State.ws.send(JSON.stringify(this.createPayload(321, { Id: historyIds })));
+                    } else if (State.activeTab === 'history') {
+                        this.renderList([], 'history');
+                    }
+                } 
+                // CMD 321: Received full history details. Extract thumbnails and render if needed.
+                else if (cmd === 321) {
+                    const historyList = dataBlock.Data?.HistoryDetailList || [];
+                    
+                    // Populate global thumbnail dictionary to sync images across different tabs
+                    historyList.forEach(histItem => {
+                        if (histItem.TaskName && histItem.Thumbnail) {
+                            State.thumbnailMap[histItem.TaskName] = histItem.Thumbnail;
+                        }
+                    });
+
+                    // Update UI depending on which tab the user is currently viewing
+                    if (State.activeTab === 'history') {
+                        this.renderList(historyList, 'history');
+                    } else if (State.activeTab === 'local' && State.items.length > 0) {
+                        // Trigger a silent re-render of local files to inject newly fetched thumbnails
+                        this.renderList(State.items, 'local');
+                    }
+                } 
+                // CMD 386: Received camera connection acknowledgment
+                else if (cmd === 386) {
+                    // Only open the modal if the user actively requested it (prevents infinite loop on close)
+                    if (dataBlock.Data?.Ack === 0 && dataBlock.Data?.VideoUrl && State.isCameraRequested) {
+                        this.showLiveCamera(dataBlock.Data.VideoUrl);
+                    }
+                } 
+                // CMD 323: Acknowledgment that the video is unlocked and ready for HTTP download
+                else if (cmd === 323) {
+                    if (dataBlock.Data?.Ack === 0 && dataBlock.Data?.Data?.length > 0) {
+                        const path = dataBlock.Data.Data[0];
+                        const ip = document.getElementById('ipInput').value.trim();
+                        const fullUrl = `http://${ip}${path}`;
+                        const fileName = path.split('/').pop();
+
+                        // Create an invisible anchor tag to force the browser download dialog
+                        const a = document.createElement('a');
+                        a.href = fullUrl;
+                        a.download = fileName;
+                        a.target = '_blank';
+                        
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        
+                        this.showToast("Download started", "success");
+                    } else {
+                        this.showToast("Failed to prepare video for download", "error");
+                    }
+                } 
+                // CMD 259 / 322: Acknowledgment for local file or history deletion
+                else if (cmd === 259 || cmd === 322) { 
+                    if (dataBlock.Data?.Ack === 0) {
+                        this.showToast(t('successDeleted'), 'success');
+                        this.fetchData();
+                    } else {
+                        this.showToast(t('errDelFailed') + dataBlock.Data?.Ack, 'error');
+                        this.updateDeleteButton(false); 
+                    }
+                }
+            },
+
+            // ==========================================
+            // 3. PRINTER ACTIONS (COMMANDS & UI TRIGGERS)
+            // ==========================================
+
+            openWebUI() {
+                const ip = document.getElementById('ipInput').value.trim();
+                if (ip) window.open(`http://${ip}`, '_blank');
+            },
+
+            openLiveCamera() {
+                State.isCameraRequested = true; // Signal intention to open the modal
+                State.ws.send(JSON.stringify(this.createPayload(386, { Enable: 1 })));
+            },
+
+            requestVideoDownload(url) {
+                this.showToast("Requesting video preparation from printer...", "info");
+                // CMD 323 acts as an unlock command for the printer's filesystem before HTTP download
+                State.ws.send(JSON.stringify(this.createPayload(323, { Url: [url] })));
+            },
+
+            async deleteSelected() {
+                // Gather all checked items
+                const checkedBoxes = document.querySelectorAll('#itemList input[type="checkbox"]:checked');
+                const ids = Array.from(checkedBoxes).map(cb => cb.value);
+                if (ids.length === 0) return;
+                
+                const tabName = State.activeTab === 'local' ? t('tabLocal') : t('tabHistory');
+                const msg = `${t('confirmDelete1')}${ids.length}${t('confirmDelete2')}${tabName}${t('confirmDelete3')}`;
+                
+                if (await this.asyncConfirm(msg)) {
+                    this.updateDeleteButton(true);
+                    
+                    // Use CMD 259 for Local Files, CMD 322 for History entries
+                    const cmd = State.activeTab === 'local' ? 259 : 322;
+                    const data = State.activeTab === 'local' ? { FileList: ids } : { Id: ids };
+                    
+                    State.ws.send(JSON.stringify(this.createPayload(cmd, data)));
+                }
+            },
+
+            // ==========================================
+            // 4. UI RENDERING & TAB MANAGEMENT
+            // ==========================================
+
+            switchTab(tabName) {
+                if (State.activeTab === tabName) return;
+                
+                State.activeTab = tabName;
+                document.getElementById('searchInput').value = "";
+                
+                document.getElementById('tab-local').className = tabName === 'local' ? 'tab active' : 'tab';
+                document.getElementById('tab-history').className = tabName === 'history' ? 'tab active' : 'tab';
+                document.getElementById('selectAll').checked = false;
+                
+                this.updateDeleteButton();
+                this.fetchData();
+            },
+
+            renderList(items, mode) {
+                // Ensure we do not overwrite the list if the user switched tabs during a network delay
+                if (mode !== State.activeTab) return;
+                State.items = items;
+                
+                const list = document.getElementById('itemList');
+                list.innerHTML = '';
+                
+                if (items.length === 0) {
+                    list.innerHTML = `<li><em style="color:var(--text-muted);">${t('noItems')}</em></li>`;
+                    document.getElementById('itemCount').innerText = `0 ${t('itemsTotal')}`;
+                    this.updateDeleteButton();
+                    return;
+                }
+                
+                // Use a DocumentFragment to minimize DOM repaints during large list insertions
+                const fragment = document.createDocumentFragment();
+                const ip = document.getElementById('ipInput').value.trim();
+
+                items.forEach((item, index) => {
+                    const val = mode === 'local' ? item.name : item.TaskId;
+                    let labelTxt = (mode === 'local' ? item.name : item.TaskName) || t('unknownItem');
+                    if (!val) return;
+                    
+                    // Clean up folder paths to keep UI clean
+                    labelTxt = labelTxt.replace('/local/', '').replace('/history/', '');
+                    const sizeTxt = (mode === 'local' && item.FileSize) ? this.formatSize(item.FileSize) : '';
+                    
+                    const li = document.createElement('li');
+                    li.setAttribute('data-search', labelTxt.toLowerCase());
+                    li.setAttribute('data-size', item.FileSize || 0);
+                    
+                    const cb = document.createElement('input');
+                    cb.type = 'checkbox'; cb.value = val; cb.id = `item_${index}`;
+                    cb.onchange = () => this.handleCheckbox();
+                    
+                    const label = document.createElement('label');
+                    label.htmlFor = cb.id; label.className = 'item-content';
+                    label.style.display = 'flex';
+                    label.style.flexDirection = 'row';
+                    label.style.gap = '12px';
+                    label.style.alignItems = 'center';
+                    
+                    let html = '';
+
+                    // LOCAL FILES LAYOUT
+                    if (mode === 'local') {
+                        let thumbUrl = State.thumbnailMap[item.name];
+                        
+                        // Transparent spacer ensures text alignment remains consistent even if no image exists
+                        let thumbHtml = `<div style="width: 44px; height: 44px; flex-shrink: 0; background: transparent;"></div>`;
+                        
+                        if (thumbUrl) {
+                            thumbUrl = thumbUrl.startsWith('http') ? thumbUrl : `http://${ip}${thumbUrl}`;
+                            thumbHtml = `<img src="${thumbUrl}" style="width: 44px; height: 44px; border-radius: 6px; object-fit: cover; background: rgba(0,0,0,0.1); flex-shrink: 0;" alt="Thumb" onerror="this.style.display='none'">`;
+                        }
+
+                        html = `
+                            ${thumbHtml}
+                            <div style="flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 4px; overflow: hidden;">
+                                <div class="item-header" style="justify-content: flex-start;">
+                                    <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${labelTxt}</span>
+                                </div>
+                                <div class="item-meta" style="margin:0;">${sizeTxt}</div>
+                            </div>
+                        `;
+                    } 
+                    // HISTORY LAYOUT
+                    else {
+                        let thumbHtml = '';
+                        if (item.Thumbnail) {
+                            let thumbUrl = item.Thumbnail.startsWith('http') ? item.Thumbnail : `http://${ip}${item.Thumbnail}`;
+                            thumbHtml = `<img src="${thumbUrl}" style="width: 44px; height: 44px; border-radius: 6px; object-fit: cover; background: rgba(0,0,0,0.1); flex-shrink: 0;" alt="Thumb" onerror="this.style.display='none'">`;
+                        }
+
+                        let durationHtml = '';
+                        if (item.BeginTime && item.EndTime) {
+                            const sec = item.EndTime - item.BeginTime;
+                            if (sec > 0) {
+                                const h = Math.floor(sec / 3600), m = Math.floor((sec % 3600) / 60);
+                                durationHtml = `${t('printDuration')}: ${h > 0 ? h+'h ' : ''}${m}m`;
+                            }
+                        }
+
+                        let videoHtml = '';
+                        // Status 1 confirms the video file actually exists and was finalized properly
+                        if (item.TimeLapseVideoStatus === 1 && item.TimeLapseVideoUrl) {
+                            videoHtml = `<button onclick="event.stopPropagation(); App.requestVideoDownload('${item.TimeLapseVideoUrl}');" style="background:transparent; border: 1px solid var(--primary); color: var(--primary); font-size: 11px; font-weight: bold; padding: 2px 6px; border-radius: 4px; margin-left: 8px; cursor: pointer;">📥 Download</button>`;
+                        }
+
+                        html = `
+                            ${thumbHtml}
+                            <div style="flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 4px; overflow: hidden;">
+                                <div class="item-header" style="justify-content: flex-start;">
+                                    <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${labelTxt}</span>
+                                    ${videoHtml}
+                                </div>
+                                <div class="item-subtitle" style="margin:0;">${durationHtml}</div>
+                            </div>
+                        `;
+                    }
+                    
+                    label.innerHTML = html;
+                    li.appendChild(cb);
+                    li.appendChild(label);
+                    fragment.appendChild(li);
+                });
+                
+                list.appendChild(fragment);
+                this.filterItems(); 
+            },
+
+            // ==========================================
+            // 5. LIST INTERACTIONS (SORT, FILTER, SELECT)
+            // ==========================================
+
+            getSearchRegex(query) {
+                // Escape special characters and convert wildcards (*) into safe regex patterns
+                const escapeRegex = (s) => s.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
+                const str = query.split('*').map(escapeRegex).join('.*');
+                return new RegExp(str, 'i');
+            },
+
+            filterItems() {
+                const query = document.getElementById('searchInput').value.trim();
+                const listItems = document.querySelectorAll('#itemList li[data-search]');
+                let visible = 0;
+
+                const regex = query ? this.getSearchRegex(query) : null;
+
+                // Toggle visibility based on regex match
+                listItems.forEach(li => {
+                    const term = li.getAttribute('data-search');
+                    if (!regex || regex.test(term)) {
+                        li.style.display = 'flex';
+                        visible++;
+                    } else {
+                        li.style.display = 'none';
+                        const cb = li.querySelector('input');
+                        if (cb && cb.checked) cb.checked = false;
+                    }
+                });
+
+                document.getElementById('itemCount').innerText = query 
+                    ? `${t('showing')} ${visible} ${t('of')} ${State.items.length} ${t('items')}` 
+                    : `${State.items.length} ${t('itemsTotal')}`;
+                
+                document.getElementById('selectAll').checked = false;
+                this.updateDeleteButton();
+            },
+
+            toggleSelectAll() {
+                const isChecked = document.getElementById('selectAll').checked;
+                // Only select boxes that are currently visible to the user
+                document.querySelectorAll('#itemList li:not([style*="display: none"]) input[type="checkbox"]')
+                    .forEach(cb => cb.checked = isChecked);
+                this.updateDeleteButton();
+            },
+
+            handleCheckbox() {
+                const visible = Array.from(document.querySelectorAll('#itemList li:not([style*="display: none"]) input[type="checkbox"]'));
+                document.getElementById('selectAll').checked = visible.length > 0 && visible.every(cb => cb.checked);
+                this.updateDeleteButton();
+            },
+
+            sortList(key) {
+                const list = document.getElementById('itemList');
+                const items = Array.from(list.querySelectorAll('li[data-search]'));
+                if (!items.length) return;
+
+                items.sort((a, b) => {
+                    const v1 = key === 'name' ? a.getAttribute('data-search') : parseInt(a.getAttribute('data-size'));
+                    const v2 = key === 'name' ? b.getAttribute('data-search') : parseInt(b.getAttribute('data-size'));
+                    
+                    if (key === 'name') return v1.localeCompare(v2) * State.sortDirection;
+                    return (v1 - v2) * State.sortDirection;
+                });
+
+                // Toggle direction for the next click
+                State.sortDirection *= -1; 
+                
+                // Re-appending existing nodes automatically moves them to their new sorted positions
+                const fragment = document.createDocumentFragment();
+                items.forEach(li => fragment.appendChild(li));
+                list.appendChild(fragment); 
+            },
+
+            // ==========================================
+            // 6. UI HELPERS & MODALS
+            // ==========================================
+
+            openApiModal() {
+                document.getElementById('apiModal').classList.add('show');
+            },
+
+            closeApiModal() {
+                document.getElementById('apiModal').classList.remove('show');
+            },
+
+            showLiveCamera(url) {
+                const container = document.getElementById('videoContainer');
+                // Uses an image tag because 3D printer cameras output standard MJPEG streams
+                container.innerHTML = `<img src="http://${url}" style="width: 100%; height: auto; border-radius: 8px;">`;
+                document.getElementById('videoModal').classList.add('show');
+            },
+
+            closeVideoModal() {
+                State.isCameraRequested = false; // Ensures handleMessage ignores any delayed Acknowledgments
+                document.getElementById('videoModal').classList.remove('show');
+                
+                // Allow CSS opacity transition to complete before tearing down the DOM element
+                setTimeout(() => {
+                    document.getElementById('videoContainer').innerHTML = ''; 
+                }, 200);
+                
+                // Tell printer to shut off the stream to conserve processing power
+                if (State.ws) State.ws.send(JSON.stringify(this.createPayload(386, { Enable: 0 })));
+            },
+
             showToast(msg, type = 'info') {
                 const container = document.getElementById('toast-container');
                 const toast = document.createElement('div');
@@ -456,7 +1043,6 @@
                 toast.innerHTML = `<span>${icon}</span> <span>${msg}</span>`;
                 container.appendChild(toast);
                 
-                // Trigger reflow for animation
                 setTimeout(() => toast.classList.add('show'), 10);
                 setTimeout(() => {
                     toast.classList.remove('show');
@@ -482,252 +1068,12 @@
                 });
             },
 
-            // --- Localization ---
-            changeLang(lang) {
-                State.lang = lang;
-                localStorage.setItem('lang', lang);
-                document.title = t('title');
-                
-                document.querySelectorAll('[data-i18n]').forEach(el => {
-                    const key = el.getAttribute('data-i18n');
-                    if (el.tagName === 'INPUT' && el.placeholder) el.placeholder = t(key);
-                    else el.innerText = t(key);
-                });
-
-                if (document.getElementById('mainScreen').style.display === 'block') {
-                    this.updateDeleteButton();
-                    this.filterItems();
-                    if (State.items.length === 0) this.renderList([], State.activeTab);
-                } else {
-                    this.setConnectingState(State.isConnecting);
-                }
-            },
-
-            toggleDarkMode() {
-                document.body.classList.toggle('dark-mode');
-                localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
-            },
-
-            // --- WebSocket Logic ---
-            createPayload(cmd, data) {
-                return { Id: "", Data: { Cmd: cmd, Data: data, RequestID: crypto.randomUUID().replace(/-/g, ''), TimeStamp: Date.now(), From: 1 } };
-            },
-
             setConnectingState(isConnecting) {
                 State.isConnecting = isConnecting;
                 const btn = document.getElementById('connectBtn');
                 btn.disabled = isConnecting;
                 document.getElementById('ipInput').disabled = isConnecting;
                 btn.querySelector('span').innerText = isConnecting ? t('connectingBtn') : t('connectBtn');
-            },
-
-            connect() {
-                const ip = document.getElementById('ipInput').value.trim();
-                if (!ip) return this.showToast(t('errInvalidIp'), 'error');
-
-                this.setConnectingState(true);
-                if (State.ws) State.ws.close();
-
-                try {
-                    State.ws = new WebSocket(`ws://${ip}/websocket`);
-                } catch (e) {
-                    return this.showToast(t('errConnFailed'), 'error');
-                }
-                
-                State.ws.onopen = () => {
-                    this.setConnectingState(false);
-                    document.getElementById('setupScreen').style.display = 'none';
-                    document.getElementById('mainScreen').style.display = 'block';
-                    
-                    // Tving hentning af data ved første forbindelse. 
-                    // switchTab afbryder, hvis vi allerede ER på 'local'.
-                    if (State.activeTab === 'local') {
-                        this.fetchData();
-                    } else {
-                        this.switchTab('local');
-                    }
-                };
-
-                State.ws.onmessage = (event) => this.handleMessage(JSON.parse(event.data));
-
-                State.ws.onerror = () => {
-                    this.setConnectingState(false);
-                    this.showToast(t('errConnFailed'), 'error');
-                };
-
-                State.ws.onclose = () => {
-                    this.setConnectingState(false);
-                    if (document.getElementById('mainScreen').style.display === 'block') {
-                        this.showToast(t('errWsClosed'), 'error');
-                    }
-                    document.getElementById('setupScreen').style.display = 'flex';
-                    document.getElementById('mainScreen').style.display = 'none';
-                };
-            },
-
-            disconnect() {
-                if (State.ws) State.ws.close();
-            },
-
-            openWebUI() {
-                const ip = document.getElementById('ipInput').value.trim();
-                if (ip) window.open(`http://${ip}`, '_blank');
-            },
-
-            handleMessage(res) {
-                const dataBlock = res.Data || {};
-                const cmd = dataBlock.Cmd;
-                
-                if (cmd === 258 && State.activeTab === 'local') {
-                    this.renderList(dataBlock.Data?.FileList || [], 'local');
-                } else if (cmd === 320 && State.activeTab === 'history') {
-                    const historyIds = dataBlock.Data?.HistoryData || [];
-                    if (historyIds.length > 0) State.ws.send(JSON.stringify(this.createPayload(321, { Id: historyIds })));
-                    else this.renderList([], 'history');
-                } else if (cmd === 321 && State.activeTab === 'history') {
-                    this.renderList(dataBlock.Data?.HistoryDetailList || [], 'history');
-                } else if (cmd === 259 || cmd === 322) { // Deletion Ack
-                    if (dataBlock.Data?.Ack === 0) {
-                        this.showToast(t('successDeleted'), 'success');
-                        this.fetchData();
-                    } else {
-                        this.showToast(t('errDelFailed') + dataBlock.Data?.Ack, 'error');
-                        this.updateDeleteButton(false); // reset button UI
-                    }
-                }
-            },
-
-            // --- Data & DOM Rendering ---
-            switchTab(tabName) {
-                if (State.activeTab === tabName) return;
-                State.activeTab = tabName;
-                document.getElementById('searchInput').value = "";
-                
-                document.getElementById('tab-local').className = tabName === 'local' ? 'tab active' : 'tab';
-                document.getElementById('tab-history').className = tabName === 'history' ? 'tab active' : 'tab';
-                document.getElementById('selectAll').checked = false;
-                
-                this.updateDeleteButton();
-                this.fetchData();
-            },
-
-            fetchData() {
-                document.getElementById('itemList').innerHTML = `<li><span style="color:var(--text-muted);">${t('loadingData')}</span></li>`;
-                document.getElementById('itemCount').innerText = t('loadingData');
-                
-                if (State.activeTab === 'local') State.ws.send(JSON.stringify(this.createPayload(258, { Url: "/local" })));
-                else State.ws.send(JSON.stringify(this.createPayload(320, {})));
-            },
-
-            formatSize(bytes) {
-                if (!bytes) return '0 B';
-                const k = 1024, sizes = ['B', 'KB', 'MB', 'GB'];
-                const i = Math.floor(Math.log(bytes) / Math.log(k));
-                return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
-            },
-
-            renderList(items, mode) {
-                if (mode !== State.activeTab) return;
-                State.items = items;
-                
-                const list = document.getElementById('itemList');
-                list.innerHTML = '';
-                
-                if (items.length === 0) {
-                    list.innerHTML = `<li><em style="color:var(--text-muted);">${t('noItems')}</em></li>`;
-                    document.getElementById('itemCount').innerText = `0 ${t('itemsTotal')}`;
-                    this.updateDeleteButton();
-                    return;
-                }
-                
-                // DRY DOM Manipulation via DocumentFragment
-                const fragment = document.createDocumentFragment();
-
-                items.forEach((item, index) => {
-                    const val = mode === 'local' ? item.name : item.TaskId;
-                    let labelTxt = (mode === 'local' ? item.name : item.TaskName) || t('unknownItem');
-                    if (!val) return;
-                    
-                    labelTxt = labelTxt.replace('/local/', '').replace('/history/', '');
-                    const sizeTxt = (mode === 'local' && item.FileSize) ? this.formatSize(item.FileSize) : '';
-                    
-                    const li = document.createElement('li');
-                    li.setAttribute('data-search', labelTxt.toLowerCase());
-                    li.setAttribute('data-size', item.FileSize || 0);
-                    
-                    const cb = document.createElement('input');
-                    cb.type = 'checkbox'; cb.value = val; cb.id = `item_${index}`;
-                    cb.onchange = () => this.handleCheckbox();
-                    
-                    const label = document.createElement('label');
-                    label.htmlFor = cb.id; label.className = 'item-content';
-                    
-                    let html = `<div class="item-header"><span>${labelTxt}</span><span class="item-meta">${sizeTxt}</span></div>`;
-                    
-                    if (mode === 'history' && item.BeginTime && item.EndTime) {
-                        const sec = item.EndTime - item.BeginTime;
-                        if (sec > 0) {
-                            const h = Math.floor(sec / 3600), m = Math.floor((sec % 3600) / 60);
-                            html += `<div class="item-subtitle">${t('printDuration')}: ${h > 0 ? h+'h ' : ''}${m}m</div>`;
-                        }
-                    }
-                    
-                    label.innerHTML = html;
-                    li.appendChild(cb);
-                    li.appendChild(label);
-                    fragment.appendChild(li);
-                });
-                
-                list.appendChild(fragment);
-                this.filterItems(); // Apply active filter and count
-            },
-
-            // --- Interactions & Sorting ---
-            getSearchRegex(query) {
-                // Safe wildcard regex generation
-                const escapeRegex = (s) => s.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
-                const str = query.split('*').map(escapeRegex).join('.*');
-                return new RegExp(str, 'i');
-            },
-
-            filterItems() {
-                const query = document.getElementById('searchInput').value.trim();
-                const listItems = document.querySelectorAll('#itemList li[data-search]');
-                let visible = 0;
-
-                const regex = query ? this.getSearchRegex(query) : null;
-
-                listItems.forEach(li => {
-                    const term = li.getAttribute('data-search');
-                    if (!regex || regex.test(term)) {
-                        li.style.display = 'flex';
-                        visible++;
-                    } else {
-                        li.style.display = 'none';
-                        const cb = li.querySelector('input');
-                        if (cb && cb.checked) cb.checked = false;
-                    }
-                });
-
-                document.getElementById('itemCount').innerText = query 
-                    ? `${t('showing')} ${visible} ${t('of')} ${State.items.length} ${t('items')}` 
-                    : `${State.items.length} ${t('itemsTotal')}`;
-                
-                document.getElementById('selectAll').checked = false;
-                this.updateDeleteButton();
-            },
-
-            toggleSelectAll() {
-                const isChecked = document.getElementById('selectAll').checked;
-                document.querySelectorAll('#itemList li:not([style*="display: none"]) input[type="checkbox"]')
-                    .forEach(cb => cb.checked = isChecked);
-                this.updateDeleteButton();
-            },
-
-            handleCheckbox() {
-                const visible = Array.from(document.querySelectorAll('#itemList li:not([style*="display: none"]) input[type="checkbox"]'));
-                document.getElementById('selectAll').checked = visible.length > 0 && visible.every(cb => cb.checked);
-                this.updateDeleteButton();
             },
 
             updateDeleteButton(isDeleting = false) {
@@ -744,43 +1090,15 @@
                 btn.innerHTML = `<span data-i18n="deleteBtn">${t('deleteBtn')}</span> <span>(${count})</span>`;
             },
 
-            async deleteSelected() {
-                const checkedBoxes = document.querySelectorAll('#itemList input[type="checkbox"]:checked');
-                const ids = Array.from(checkedBoxes).map(cb => cb.value);
-                if (ids.length === 0) return;
-                
-                const tabName = State.activeTab === 'local' ? t('tabLocal') : t('tabHistory');
-                const msg = `${t('confirmDelete1')}${ids.length}${t('confirmDelete2')}${tabName}${t('confirmDelete3')}`;
-                
-                if (await this.asyncConfirm(msg)) {
-                    this.updateDeleteButton(true);
-                    const cmd = State.activeTab === 'local' ? 259 : 322;
-                    const data = State.activeTab === 'local' ? { FileList: ids } : { Id: ids };
-                    State.ws.send(JSON.stringify(this.createPayload(cmd, data)));
-                }
-            },
-
-            sortList(key) {
-                const list = document.getElementById('itemList');
-                const items = Array.from(list.querySelectorAll('li[data-search]'));
-                if (!items.length) return;
-
-                items.sort((a, b) => {
-                    const v1 = key === 'name' ? a.getAttribute('data-search') : parseInt(a.getAttribute('data-size'));
-                    const v2 = key === 'name' ? b.getAttribute('data-search') : parseInt(b.getAttribute('data-size'));
-                    
-                    if (key === 'name') return v1.localeCompare(v2) * State.sortDirection;
-                    return (v1 - v2) * State.sortDirection;
-                });
-
-                State.sortDirection *= -1; // Flip for next click
-                const fragment = document.createDocumentFragment();
-                items.forEach(li => fragment.appendChild(li));
-                list.appendChild(fragment); // Appending re-orders them automatically
+            formatSize(bytes) {
+                if (!bytes) return '0 B';
+                const k = 1024, sizes = ['B', 'KB', 'MB', 'GB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
             }
         };
 
-        // Initialize App
+        // Boot the application
         App.init();
     </script>
 </body>
