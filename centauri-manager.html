@@ -539,11 +539,26 @@
                 document.getElementById('langSelect').value = savedLang;
                 this.changeLang(savedLang);
 
+                const ipInput = document.getElementById('ipInput');
+
+                // Restore the most recently successful printer IP, if available.
+                const savedIp = localStorage.getItem('printerIp');
+                if (savedIp) ipInput.value = savedIp;
+
+                // Allow Enter in the IP field to trigger the same behavior as clicking Connect.
+                ipInput.addEventListener('keydown', (event) => {
+                    if (event.key === 'Enter') {
+                        event.preventDefault();
+                        if (!State.isConnecting) this.connect();
+                    }
+                });
+
                 // Auto-connect if an IP is provided via URL parameter (e.g., ?ip=192.168.0.17)
+                // URL parameter takes precedence over the saved IP.
                 const urlParams = new URLSearchParams(window.location.search);
                 const autoIp = urlParams.get('ip');
                 if (autoIp) {
-                    document.getElementById('ipInput').value = autoIp;
+                    ipInput.value = autoIp;
                     setTimeout(() => this.connect(), 100);
                 }
             },
@@ -598,6 +613,9 @@
 
             sendCommand(cmd, data = {}) {
                 if (!State.ws || State.ws.readyState !== WebSocket.OPEN) return false;
+                //console.log('Sending command: ', cmd)
+                //console.log('Data: ', data)
+                
                 State.ws.send(JSON.stringify(this.createPayload(cmd, data)));
                 return true;
             },
@@ -636,6 +654,9 @@
                 }
                 
                 State.ws.onopen = () => {
+                    // Remember the most recent successful printer IP for future sessions.
+                    localStorage.setItem('printerIp', ip);
+
                     this.setConnectingState(false);
                     document.getElementById('setupScreen').style.display = 'none';
                     document.getElementById('mainScreen').style.display = 'block';
@@ -823,8 +844,10 @@
                     
                     // Use CMD 259 for Local Files, CMD 322 for History entries
                     const cmd = State.activeTab === 'local' ? 259 : 322;
-                    const data = State.activeTab === 'local' ? { FileList: ids } : { Id: ids };
+                    const data = State.activeTab === 'local' ? { FileList: ids.map(name => name.startsWith('/local/') ? name : `/local/${name}`) } : { Id: ids };
                     
+                    console.log('ids: ', ids);
+                    console.log('data: ', data);
                     this.sendCommand(cmd, data);
                 }
             },
