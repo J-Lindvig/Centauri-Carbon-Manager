@@ -515,7 +515,8 @@
             sortDirection: 1, 
             isConnecting: false,
             thumbnailMap: {},
-            isCameraRequested: false 
+            isCameraRequested: false,
+            heartbeatTimer: null
         };
 
         // Translation helper
@@ -595,6 +596,29 @@
                 };
             },
 
+            sendCommand(cmd, data = {}) {
+                if (!State.ws || State.ws.readyState !== WebSocket.OPEN) return false;
+                State.ws.send(JSON.stringify(this.createPayload(cmd, data)));
+                return true;
+            },
+
+            startHeartbeat() {
+                this.stopHeartbeat();
+
+                // The printer closes idle WebSocket sessions after roughly 60 seconds.
+                // CMD 134 is the SDCP heartbeat/ping command, so send it well before that timeout.
+                const sendHeartbeat = () => this.sendCommand(134, {});
+                sendHeartbeat();
+                State.heartbeatTimer = setInterval(sendHeartbeat, 30000);
+            },
+
+            stopHeartbeat() {
+                if (State.heartbeatTimer) {
+                    clearInterval(State.heartbeatTimer);
+                    State.heartbeatTimer = null;
+                }
+            },
+
             connect() {
                 const ip = document.getElementById('ipInput').value.trim();
                 if (!ip) return this.showToast(t('errInvalidIp'), 'error');
@@ -602,6 +626,7 @@
                 this.setConnectingState(true);
                 
                 // Close any existing zombie connections
+                this.stopHeartbeat();
                 if (State.ws) State.ws.close();
 
                 try {
@@ -615,8 +640,11 @@
                     document.getElementById('setupScreen').style.display = 'none';
                     document.getElementById('mainScreen').style.display = 'block';
                     
+                    // Start the heartbeat before any long idle period can close the socket.
+                    this.startHeartbeat();
+                    
                     // Request machine attributes immediately (CMD 1) to fetch Model, Firmware, and Memory
-                    State.ws.send(JSON.stringify(this.createPayload(1, {})));
+                    this.sendCommand(1, {});
                     
                     // Trigger the first data fetch based on the currently active tab
                     if (State.activeTab === 'local') {
@@ -630,11 +658,13 @@
                 State.ws.onmessage = (event) => this.handleMessage(JSON.parse(event.data));
 
                 State.ws.onerror = () => {
+                    this.stopHeartbeat();
                     this.setConnectingState(false);
                     this.showToast(t('errConnFailed'), 'error');
                 };
 
                 State.ws.onclose = () => {
+                    this.stopHeartbeat();
                     this.setConnectingState(false);
                     if (document.getElementById('mainScreen').style.display === 'block') {
                         this.showToast(t('errWsClosed'), 'error');
@@ -646,6 +676,7 @@
             },
 
             disconnect() {
+                this.stopHeartbeat();
                 if (State.ws) State.ws.close();
                 document.getElementById('printerInfo').innerText = ""; 
             },
@@ -656,11 +687,11 @@
                 document.getElementById('itemCount').innerText = t('loadingData');
                 
                 // Fetch history silently in the background (CMD 320) to keep the global thumbnail dictionary updated
-                State.ws.send(JSON.stringify(this.createPayload(320, {})));
+                this.sendCommand(320, {});
 
                 // Fetch local files (CMD 258) if the user is currently viewing the local tab
                 if (State.activeTab === 'local') {
-                    State.ws.send(JSON.stringify(this.createPayload(258, { Url: "/local" })));
+                    this.sendCommand(258, { Url: "/local" });
                 }
             },
 
@@ -692,7 +723,7 @@
                 else if (cmd === 320) {
                     const historyIds = dataBlock.Data?.HistoryData || [];
                     if (historyIds.length > 0) {
-                        State.ws.send(JSON.stringify(this.createPayload(321, { Id: historyIds })));
+                        this.sendCommand(321, { Id: historyIds });
                     } else if (State.activeTab === 'history') {
                         this.renderList([], 'history');
                     }
@@ -769,13 +800,13 @@
 
             openLiveCamera() {
                 State.isCameraRequested = true; // Signal intention to open the modal
-                State.ws.send(JSON.stringify(this.createPayload(386, { Enable: 1 })));
+                this.sendCommand(386, { Enable: 1 });
             },
 
             requestVideoDownload(url) {
                 this.showToast("Requesting video preparation from printer...", "info");
                 // CMD 323 acts as an unlock command for the printer's filesystem before HTTP download
-                State.ws.send(JSON.stringify(this.createPayload(323, { Url: [url] })));
+                this.sendCommand(323, { Url: [url] });
             },
 
             async deleteSelected() {
@@ -794,7 +825,7 @@
                     const cmd = State.activeTab === 'local' ? 259 : 322;
                     const data = State.activeTab === 'local' ? { FileList: ids } : { Id: ids };
                     
-                    State.ws.send(JSON.stringify(this.createPayload(cmd, data)));
+                    this.sendCommand(cmd, data);
                 }
             },
 
@@ -1032,7 +1063,7 @@
                 }, 200);
                 
                 // Tell printer to shut off the stream to conserve processing power
-                if (State.ws) State.ws.send(JSON.stringify(this.createPayload(386, { Enable: 0 })));
+                this.sendCommand(386, { Enable: 0 });
             },
 
             showToast(msg, type = 'info') {
